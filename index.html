@@ -1,159 +1,22 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>BLAIR FARMS BIOTA ARCHIVE</title>
-<style>
-:root{--bg:#faf7f2;--card:#fff;--ink:#2b2622;--mute:#7a6f65;--line:#e4ddd2;--acc:#8a5a2b;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1916;--card:#26221e;--ink:#efe8de;--mute:#a69b8e;--line:#3a342d;--acc:#d9a066;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#1c1916;--card:#26221e;--ink:#efe8de;--mute:#a69b8e;--line:#3a342d;--acc:#d9a066;color-scheme:dark}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-.w{max-width:1000px;margin:0 auto;padding:16px}
-h1{font:600 24px Georgia,serif;letter-spacing:.08em;margin:0}h2{font:600 17px Georgia,serif;margin:22px 0 8px}
-.sub{color:var(--mute);font-size:13px;margin:2px 0 12px}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px;border-bottom:1px solid var(--line);padding-bottom:10px}
-.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
-button,select,input{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 11px}
-button{cursor:pointer}button.on{border-color:var(--acc);color:var(--acc);font-weight:600}
-.soon{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);border:1px dashed var(--line);border-radius:99px;padding:0 6px;margin-left:3px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
-.card:hover{border-color:var(--acc)}.card i{color:var(--mute);font-size:13px}.card small{color:var(--mute)}
-.sw{height:54px;border-radius:8px;margin-bottom:6px;border:1px solid var(--line)}
-.strip{display:flex;gap:4px;margin-top:6px}.strip span{flex:1;height:14px;border-radius:4px;border:1px solid var(--line)}
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:16px;z-index:5}
-.md{background:var(--bg);border-radius:14px;padding:16px;width:100%;max-width:720px;margin:auto}
-.t{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0}
-.row{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end}
-.chip{width:58px;text-align:center;font-size:11px;color:var(--mute)}.chip div{height:34px;border-radius:6px;border:1px solid var(--line);margin-bottom:2px}
-.rk{display:grid;grid-template-columns:76px 1fr 48px;gap:8px;align-items:center;margin:5px 0;font-size:13px}
-.rk .b{height:16px;border-radius:5px;background:var(--acc);opacity:.85}.rk .g{display:flex;gap:6px}
-.rk .g span{width:30px;height:16px;border-radius:4px;border:1px solid var(--line)}
-.pad{overflow-x:auto}svg{max-width:100%;height:auto}svg text{fill:var(--mute);font-size:11px}
-.note{font-size:12px;color:var(--mute)}
-.wh{position:relative;width:min(100%,460px);aspect-ratio:1;margin:0 auto}
-.wh .bg{position:absolute;inset:13%;border-radius:50%;background:radial-gradient(circle,#fff 0%,rgba(255,255,255,0) 72%),conic-gradient(hsl(0,100%,50%),hsl(60,100%,50%),hsl(120,100%,50%),hsl(180,100%,50%),hsl(240,100%,50%),hsl(300,100%,50%),hsl(360,100%,50%));border:1px solid var(--line)}
-.wh svg{position:absolute;inset:0;width:100%;height:100%}
-.cov{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.cov span{font-size:12px;padding:3px 9px;border-radius:99px;border:1px solid var(--line)}.cov .y{color:#fff;text-shadow:0 0 2px rgba(0,0,0,.6)}.cov .n{color:var(--mute);border-style:dashed}
-.ph{border:2px dashed var(--line);border-radius:14px;padding:18px;background:var(--card)}
-.fm{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;overflow-x:auto;font:13px/1.6 ui-monospace,Menlo,Consolas,monospace;white-space:pre}
-.tb{border-collapse:collapse;font-size:13px;margin:8px 0}.tb td,.tb th{border:1px solid var(--line);padding:4px 10px;text-align:right}.tb td:first-child{text-align:left}
-</style></head><body><div class="w">
-<h1>BLAIR FARMS BIOTA ARCHIVE</h1>
-<div class="sub">Southeastern native plant dye records</div>
-<div class="tabs" id="tabs"></div><div id="app"></div><div id="ov"></div></div>
-<script type="application/json" id="d">{"schema":1,
-"wool":[
-{"id":"BM","common":"Brocade Moss","sci":"Callicladium imponens","part":"Whole","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"BM0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#e7dcc1"},{"l":"Wk 1","h":"#aaa394"},{"l":"Wk 2","h":"#978058"},{"l":"Wk 3","h":"#e4d9c8"},{"l":"Wk 4","h":"#d1a65e"}]},{"id":"BM1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#e7dcc1"},{"l":"Wk 1","h":"#c7c1b2"},{"l":"Wk 2","h":"#d6cfb2"},{"l":"Wk 3","h":"#dbd1b7"},{"l":"Wk 4","h":"#ded1b3"}]},{"id":"BM2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#e7dcc1"},{"l":"Wk 1","h":"#e3e5da"},{"l":"Wk 2","h":"#a08f6f"},{"l":"Wk 3","h":"#d2c4a6"},{"l":"Wk 4","h":"#dfd3b7"}]}]},
-{"id":"PL","common":"Parmeliaceae Lichen","sci":"Parmeliaceae","part":"Whole","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"PL0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#b57943"},{"l":"Wk 1","h":"#55361a"},{"l":"Wk 2","h":"#6d4214"},{"l":"Wk 3","h":"#704932"},{"l":"Wk 4","h":"#98601f"}]},{"id":"PL1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#b57943"},{"l":"Wk 1","h":"#875d43"},{"l":"Wk 2","h":"#7a552e"},{"l":"Wk 3","h":"#6d4b30"},{"l":"Wk 4","h":"#765542"}]},{"id":"PL2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#b57943"},{"l":"Wk 1","h":"#966847"},{"l":"Wk 2","h":"#7c5430"},{"l":"Wk 3","h":"#4d3119"},{"l":"Wk 4","h":"#b48d6f"}]}]},
-{"id":"HTT","common":"Hairy Turkey Tail","sci":"Trametes hirsuta","part":"Whole","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"HTT0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#cfaa7a"},{"l":"Wk 1","h":"#bfa98a"},{"l":"Wk 2","h":"#8e6d39"},{"l":"Wk 3","h":"#cab092"},{"l":"Wk 4","h":"#d39c54"}]},{"id":"HTT1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#cfaa7a"},{"l":"Wk 1","h":"#9e8b80"},{"l":"Wk 2","h":"#947451"},{"l":"Wk 3","h":"#ab906b"},{"l":"Wk 4","h":"#ccaf90"}]},{"id":"HTT2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#cfaa7a"},{"l":"Wk 1","h":"#c1b19b"},{"l":"Wk 2","h":"#917147"},{"l":"Wk 3","h":"#7f6542"},{"l":"Wk 4","h":"#d8b98e"}]}]},
-{"id":"CG","common":"Common Greenbrier","sci":"Smilax rotundifolia","part":"Berries","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"CG0","date":"","aspect":"Lightfastness","texture":3,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#9aa3cb"},{"l":"Wk 1","h":"#4c3e3a"},{"l":"Wk 2","h":"#6d5335"},{"l":"Wk 3","h":"#34302d"},{"l":"Wk 4","h":"#62421b"}]},{"id":"CG1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#9aa3cb"},{"l":"Wk 1","h":"#6a7078"},{"l":"Wk 2","h":"#363a39"},{"l":"Wk 3","h":"#373b38"},{"l":"Wk 4","h":"#434747"}]},{"id":"CG2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#9aa3cb"},{"l":"Wk 1","h":"#4d5863"},{"l":"Wk 2","h":"#211d13"},{"l":"Wk 3","h":"#323230"},{"l":"Wk 4","h":"#47463f"}]}]},
-{"id":"RU","common":"Russula Mushroom","sci":"Russula","part":"Whole","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"RU0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#ccc1ac"},{"l":"Wk 1","h":"#b8b3a1"},{"l":"Wk 2","h":"#a08b5b"},{"l":"Wk 3","h":"#c0b6a7"},{"l":"Wk 4","h":"#deb972"}]},{"id":"RU1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#ccc1ac"},{"l":"Wk 1","h":"#cbd0c6"},{"l":"Wk 2","h":"#d3caab"},{"l":"Wk 3","h":"#b4ab8c"},{"l":"Wk 4","h":"#e8dfca"}]},{"id":"RU2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#ccc1ac"},{"l":"Wk 1","h":"#dcdbd2"},{"l":"Wk 2","h":"#bca98c"},{"l":"Wk 3","h":"#d7ceaf"},{"l":"Wk 4","h":"#eee7cf"}]}]},
-{"id":"HM","common":"Hedgehog Mushroom","sci":"Hydnum repandum","part":"Whole","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"HM0","date":"","aspect":"Lightfastness","texture":3,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#ddc5a1"},{"l":"Wk 1","h":"#ab9e87"},{"l":"Wk 2","h":"#a98a4c"},{"l":"Wk 3","h":"#eadbc6"},{"l":"Wk 4","h":"#dbbb7e"}]},{"id":"HM1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#ddc5a1"},{"l":"Wk 1","h":"#d0cbbd"},{"l":"Wk 2","h":"#f0edd6"},{"l":"Wk 3","h":"#e8d8be"},{"l":"Wk 4","h":"#fff7db"}]},{"id":"HM2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#ddc5a1"},{"l":"Wk 1","h":"#e2dcce"},{"l":"Wk 2","h":"#f8efd3"},{"l":"Wk 3","h":"#dbc8a3"},{"l":"Wk 4","h":"#d7c1a5"}]}]},
-{"id":"BB","common":"Broomsedge Bluestem","sci":"Andropogon virginicus","part":"Grass","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"BB0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#dfbd01"},{"l":"Wk 1","h":"#caa500"},{"l":"Wk 2","h":"#a07800"},{"l":"Wk 3","h":"#dbb71f"},{"l":"Wk 4","h":"#dba700"}]},{"id":"BB1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#dfbd01"},{"l":"Wk 1","h":"#bf9b02"},{"l":"Wk 2","h":"#e1c920"},{"l":"Wk 3","h":"#ead41e"},{"l":"Wk 4","h":"#e4c337"}]},{"id":"BB2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#dfbd01"},{"l":"Wk 1","h":"#e3d617"},{"l":"Wk 2","h":"#e9cf03"},{"l":"Wk 3","h":"#d5b904"},{"l":"Wk 4","h":"#e6c718"}]}]},
-{"id":"SS","common":"Shining Sumac","sci":"Rhus copallinum var. latifolia","part":"Leaves and stems","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"SS0","date":"","aspect":"Lightfastness","texture":3,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#d79966"},{"l":"Wk 1","h":"#745b49"},{"l":"Wk 2","h":"#684118"},{"l":"Wk 3","h":"#9a6e5a"},{"l":"Wk 4","h":"#93611f"}]},{"id":"SS1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#d79966"},{"l":"Wk 1","h":"#9e7d60"},{"l":"Wk 2","h":"#836440"},{"l":"Wk 3","h":"#9e8369"},{"l":"Wk 4","h":"#ad8f73"}]},{"id":"SS2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#d79966"},{"l":"Wk 1","h":"#9c8068"},{"l":"Wk 2","h":"#5b4223"},{"l":"Wk 3","h":"#8d7257"},{"l":"Wk 4","h":"#ab8b63"}]}]},
-{"id":"SAC","common":"St. Andrew’s Cross","sci":"Hypericum hypericoides","part":"Whole","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"SAC0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#c6b57e"},{"l":"Wk 1","h":"#a28e69"},{"l":"Wk 2","h":"#af914d"},{"l":"Wk 3","h":"#d2b99c"},{"l":"Wk 4","h":"#c3964e"}]},{"id":"SAC1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#c6b57e"},{"l":"Wk 1","h":"#c4ba9a"},{"l":"Wk 2","h":"#b69d6d"},{"l":"Wk 3","h":"#e9d1a3"},{"l":"Wk 4","h":"#d9c59f"}]},{"id":"SAC2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#c6b57e"},{"l":"Wk 1","h":"#d2c497"},{"l":"Wk 2","h":"#a8864c"},{"l":"Wk 3","h":"#bea575"},{"l":"Wk 4","h":"#ead2a6"}]}]},
-{"id":"WA","common":"Wild Asparagus","sci":"Asparagus officinalis","part":"Needles","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"WA0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#c4a845"},{"l":"Wk 1","h":"#b19863"},{"l":"Wk 2","h":"#af861e"},{"l":"Wk 3","h":"#d9bd7b"},{"l":"Wk 4","h":"#b27f18"}]},{"id":"WA1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#c4a845"},{"l":"Wk 1","h":"#baab85"},{"l":"Wk 2","h":"#e8ca86"},{"l":"Wk 3","h":"#bca15e"},{"l":"Wk 4","h":"#f4dc9b"}]},{"id":"WA2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#c4a845"},{"l":"Wk 1","h":"#ccbf81"},{"l":"Wk 2","h":"#ba9639"},{"l":"Wk 3","h":"#cfae63"},{"l":"Wk 4","h":"#bf9f51"}]}]},
-{"id":"PF","common":"Persimmon Fruit","sci":"Diospyros virginiana","part":"Fruit","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"PF0","date":"","aspect":"Lightfastness","texture":3,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#dcb37a"},{"l":"Wk 1","h":"#a2907e"},{"l":"Wk 2","h":"#8e6833"},{"l":"Wk 3","h":"#f5decb"},{"l":"Wk 4","h":"#c99c66"}]},{"id":"PF1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#dcb37a"},{"l":"Wk 1","h":"#d4a789"},{"l":"Wk 2","h":"#a89077"},{"l":"Wk 3","h":"#87705a"},{"l":"Wk 4","h":"#d4bba0"}]},{"id":"PF2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#dcb37a"},{"l":"Wk 1","h":"#c2bcae"},{"l":"Wk 2","h":"#ead5bb"},{"l":"Wk 3","h":"#c6ac8e"},{"l":"Wk 4","h":"#c3aa8c"}]}]},
-{"id":"SG","common":"Sweet Gum Pod","sci":"Liquidambar styraciflua","part":"Seed pod","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"SG0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#b8b47b"},{"l":"Wk 1","h":"#af9b7f"},{"l":"Wk 2","h":"#785a1c"},{"l":"Wk 3","h":"#c4ae96"},{"l":"Wk 4","h":"#bc8f4d"}]},{"id":"SG1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#b8b47b"},{"l":"Wk 1","h":"#cdc4b3"},{"l":"Wk 2","h":"#918259"},{"l":"Wk 3","h":"#bdac92"},{"l":"Wk 4","h":"#d9c6aa"}]},{"id":"SG2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#b8b47b"},{"l":"Wk 1","h":"#ccc5b3"},{"l":"Wk 2","h":"#dccbaf"},{"l":"Wk 3","h":"#d8c6aa"},{"l":"Wk 4","h":"#bdac90"}]}]},
-{"id":"GM","common":"Gypsy Mushroom","sci":"Cortinarius caperatus","part":"Whole","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"GM0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#c5b286"},{"l":"Wk 1","h":"#d5d0bb"},{"l":"Wk 2","h":"#9d824a"},{"l":"Wk 3","h":"#d6cbb8"},{"l":"Wk 4","h":"#dbb66f"}]},{"id":"GM1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#c5b286"},{"l":"Wk 1","h":"#d4d1c0"},{"l":"Wk 2","h":"#ad9d7a"},{"l":"Wk 3","h":"#e2dec9"},{"l":"Wk 4","h":"#fdf1d5"}]},{"id":"GM2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#c5b286"},{"l":"Wk 1","h":"#cdcec3"},{"l":"Wk 2","h":"#d3c9af"},{"l":"Wk 3","h":"#d3c9af"},{"l":"Wk 4","h":"#cdc0aa"}]}]},
-{"id":"SP","common":"Stalked Puffball","sci":"Calostoma cinnabarinum","part":"Whole","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"SP0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#dcc698"},{"l":"Wk 1","h":"#d4ceb2"},{"l":"Wk 2","h":"#98814a"},{"l":"Wk 3","h":"#c3b69a"},{"l":"Wk 4","h":"#d4b467"}]},{"id":"SP1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#dcc698"},{"l":"Wk 1","h":"#ced2c1"},{"l":"Wk 2","h":"#b5ab8c"},{"l":"Wk 3","h":"#c9bd9c"},{"l":"Wk 4","h":"#d9ceac"}]},{"id":"SP2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#dcc698"},{"l":"Wk 1","h":"#dcdbc6"},{"l":"Wk 2","h":"#f9eeca"},{"l":"Wk 3","h":"#eee5c6"},{"l":"Wk 4","h":"#e1d6b6"}]}]},
-{"id":"SMS","common":"Smooth Sumac","sci":"Rhus glabra","part":"Berries","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"SMS0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#e39a38"},{"l":"Wk 1","h":"#412607"},{"l":"Wk 2","h":"#7f5815"},{"l":"Wk 3","h":"#6d513c"},{"l":"Wk 4","h":"#996316"}]},{"id":"SMS1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#e39a38"},{"l":"Wk 1","h":"#866645"},{"l":"Wk 2","h":"#5f3b16"},{"l":"Wk 3","h":"#493212"},{"l":"Wk 4","h":"#71512b"}]},{"id":"SMS2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#e39a38"},{"l":"Wk 1","h":"#2e1901"},{"l":"Wk 2","h":"#876538"},{"l":"Wk 3","h":"#715225"},{"l":"Wk 4","h":"#56380f"}]}]},
-{"id":"AO","common":"Autumn Olive","sci":"Elaeagnus umbellata","part":"Berries","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"AO0","date":"","aspect":"Lightfastness","texture":3,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#e19378"},{"l":"Wk 1","h":"#b38c76"},{"l":"Wk 2","h":"#b5904d"},{"l":"Wk 3","h":"#ead3b9"},{"l":"Wk 4","h":"#efbe6f"}]},{"id":"AO1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#e19378"},{"l":"Wk 1","h":"#c5a28b"},{"l":"Wk 2","h":"#c2b493"},{"l":"Wk 3","h":"#ddc49f"},{"l":"Wk 4","h":"#f3e0b9"}]},{"id":"AO2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#e19378"},{"l":"Wk 1","h":"#caab93"},{"l":"Wk 2","h":"#fce1b4"},{"l":"Wk 3","h":"#e0c396"},{"l":"Wk 4","h":"#ebcfa0"}]}]},
-{"id":"BGT","common":"Black Gum","sci":"Nyssa sylvatica","part":"Berries","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"BGT0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#beb29c"},{"l":"Wk 1","h":"#c9c0ae"},{"l":"Wk 2","h":"#ab8b52"},{"l":"Wk 3","h":"#aa9885"},{"l":"Wk 4","h":"#ddb876"}]},{"id":"BGT1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#beb29c"},{"l":"Wk 1","h":"#b9b7a6"},{"l":"Wk 2","h":"#bdb69e"},{"l":"Wk 3","h":"#bfb4a1"},{"l":"Wk 4","h":"#e3d9c2"}]},{"id":"BGT2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#beb29c"},{"l":"Wk 1","h":"#d2d5cc"},{"l":"Wk 2","h":"#e8dec4"},{"l":"Wk 3","h":"#c1b7a1"},{"l":"Wk 4","h":"#b9af95"}]}]},
-{"id":"RL","common":"Lobster Mushroom","sci":"Hypomyces lactifluorum","part":"Crust","mordant":"10% alum, 5% cream of tartar","notes":"","tests":[{"id":"RL0","date":"","aspect":"Lightfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#a9896d"},{"l":"Wk 1","h":"#8a715b"},{"l":"Wk 2","h":"#8a6b3c"},{"l":"Wk 3","h":"#af947a"},{"l":"Wk 4","h":"#cd9954"}]},{"id":"RL1","date":"","aspect":"Waterfastness","texture":4,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#a9896d"},{"l":"Wk 1","h":"#b3a391"},{"l":"Wk 2","h":"#a08666"},{"l":"Wk 3","h":"#bba189"},{"l":"Wk 4","h":"#fee7ce"}]},{"id":"RL2","date":"","aspect":"Washfastness","texture":5,"notes":"Source: original study, Fig. 3 (colorimeter hex readings).","colors":[{"l":"Start","h":"#a9896d"},{"l":"Wk 1","h":"#af9b85"},{"l":"Wk 2","h":"#b99c7f"},{"l":"Wk 3","h":"#a98f77"},{"l":"Wk 4","h":"#b59b86"}]}]}
-],
-"concentrates":[]}</script>
-<script>
-let D;try{D=JSON.parse(document.getElementById('d').textContent)}catch(e){D={wool:[],concentrates:[]}}
-const W=D.wool||[],$=id=>document.getElementById(id),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const TY=['Lightfastness','Waterfastness','Washfastness'],LC=['#e0a030','#3b82c4','#8a63c9','#4aa56b','#c9566b'];
-function lab(h){const r=[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255).map(v=>v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4));
-const x=(r[0]*.4124+r[1]*.3576+r[2]*.1805)/.95047,y=r[0]*.2126+r[1]*.7152+r[2]*.0722,z=(r[0]*.0193+r[1]*.1192+r[2]*.9505)/1.08883,f=t=>t>.008856?Math.cbrt(t):7.787*t+16/116;
-return[116*f(y)-16,500*(f(x)-f(y)),200*(f(y)-f(z))]}
-const dE=(a,b)=>{const p=lab(a),q=lab(b);return Math.hypot(p[0]-q[0],p[1]-q[1],p[2]-q[2])};
-const drift=t=>t.colors.map(c=>dE(t.colors[0].h,c.h)),last=t=>t.colors[t.colors.length-1],P=id=>W.find(p=>p.id===id);
-let tab='lib',cur=null,q='',vp=(W[0]||{}).id,va='All',wm='all',mx='0:0';
-const TABS=[['lib','Wool Library'],['wheel','Color Wheel'],['fast','Fastness'],['conc','Concentrates',1],['sol','Solution Analysis',1],['meth','Methods']];
-function go(t){tab=t;draw()}
-function draw(){$('tabs').innerHTML=TABS.map(t=>`<button class="${t[0]==tab?'on':''}" onclick="go('${t[0]}')">${t[1]}${t[2]?'<span class="soon">soon</span>':''}</button>`).join('');
-$('app').innerHTML=({lib:libV,wheel:wheelV,fast:fastV,conc:concV,sol:solV,meth:methV})[tab]();if(tab=='lib')grid()}
-/* Library (read-only) */
-const card=p=>`<div class="card" onclick="openP('${p.id}')"><div class="sw" style="background:${p.tests[0]?p.tests[0].colors[0].h:'#ccc'}"></div><b>${esc(p.common)}</b><i>${esc(p.sci)}</i><small>${esc(p.part)} · ${p.tests.length} test${p.tests.length==1?'':'s'}</small><div class="strip">${p.tests.map(t=>`<span title="${esc(t.aspect)}: final color" style="background:${last(t).h}"></span>`).join('')}</div></div>`;
-function libV(){return`<div class="bar"><input style="flex:1;min-width:160px" placeholder="Search by common or scientific name…" value="${esc(q)}" oninput="q=this.value;grid()"><span class="note">${W.length} plants · dyed wool</span></div><div class="grid" id="g"></div><div class="note" style="margin-top:10px">Big swatch = starting color on the wool. Small swatches = final color after each test. Source: original study (Fig. 3), colorimeter hex readings.</div>`}
-function grid(){const L=W.filter(p=>(p.common+' '+p.sci).toLowerCase().includes(q.toLowerCase()));$('g').innerHTML=L.map(card).join('')||'<div class="note">No matches.</div>'}
-function openP(id){cur=id;modal()}function closeP(){cur=null;modal()}
-function tHtml(t){const d=drift(t);return`<div class="t"><div class="row" style="justify-content:space-between;align-items:center"><b>${esc(t.aspect)}</b><span class="note">${esc(t.date||'date not recorded')} · texture ${esc(t.texture)}/7 · drift ΔE ${d[d.length-1].toFixed(1)}</span></div><div class="row" style="margin-top:8px">${t.colors.map(c=>`<div class="chip"><div style="background:${c.h}"></div>${esc(c.l)}<br>${esc(c.h)}</div>`).join('')}</div>${t.notes?`<div class="note" style="margin-top:6px">${esc(t.notes)}</div>`:''}</div>`}
-function modal(){if(!cur||!P(cur)){$('ov').innerHTML='';return}const p=P(cur);
-$('ov').innerHTML=`<div class="ov" onclick="if(event.target==this)closeP()"><div class="md"><div class="row" style="justify-content:space-between;align-items:center"><div><h2 style="margin:0">${esc(p.common)}</h2><i class="note">${esc(p.sci)}</i></div><button onclick="closeP()">Close</button></div>
-<p class="note">Part used: ${esc(p.part||'not recorded')} · Mordant: ${esc(p.mordant||'not recorded')}${p.notes?' · '+esc(p.notes):''}</p><h2>Tests</h2>${p.tests.map(tHtml).join('')||'<div class="note">No tests recorded.</div>'}</div></div>`}
-/* Color wheel */
-const HN=['Red','Orange','Yellow','Chartreuse','Green','Spring green','Cyan','Azure','Blue','Violet','Magenta','Rose'];
-const pt=(r,a)=>[r*Math.sin(a*Math.PI/180),-r*Math.cos(a*Math.PI/180)];
-const arc=(a0,a1,r0,r1)=>{const A=pt(r1,a0),B=pt(r1,a1),C=pt(r0,a1),D=pt(r0,a0);return`M${A}A${r1},${r1} 0 0 1 ${B}L${C}A${r0},${r0} 0 0 0 ${D}Z`};
-function hsv(h){const r=[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255),m=Math.max(...r),n=Math.min(...r),d=m-n;let H=0;if(d){H=m==r[0]?((r[1]-r[2])/d)%6:m==r[1]?(r[2]-r[0])/d+2:(r[0]-r[1])/d+4;H*=60;if(H<0)H+=360}return[H,m?d/m:0,m]}
-function wheelV(){const pts=[];W.forEach(p=>p.tests.forEach(t=>t.colors.forEach((c,i)=>{if(wm=='final'&&i<t.colors.length-1)return;if(wm=='start'&&i>0)return;pts.push({p,t,c})})));
-const cnt=Array(12).fill(0);let neu=0,dots='';
-pts.forEach(o=>{const[H,S,V]=hsv(o.c.h);if(S<.15||V<.15){neu++;return}cnt[Math.round(H/30)%12]++;const[x,y]=pt(S*74,H);dots+=`<circle cx="${x}" cy="${y}" r="3.6" fill="${o.c.h}" stroke="#000" stroke-opacity=".55" stroke-width=".7" style="cursor:pointer" onclick="openP('${o.p.id}')"><title>${esc(o.p.common)} · ${esc(o.t.aspect)} · ${esc(o.c.l)} · ${o.c.h}</title></circle>`});
-const ring=cnt.map((n,i)=>`<path d="${arc(i*30-14,i*30+14,80,96)}" ${n?`fill="hsl(${i*30},80%,50%)"`:`fill="none" stroke="var(--mute)" stroke-dasharray="2 2"`}><title>${HN[i]}: ${n?n+' colors':'not reached yet'}</title></path>`).join('');
-const got=cnt.filter(n=>n).length,sel=v=>wm==v?' selected':'';
-return`<h2 style="margin-top:0">Color wheel</h2><div class="sub">Which parts of the visible spectrum the dyes reach. Angle is hue, distance from the center is saturation, and every dot is a measured color.</div><div class="bar"><span class="note">Show:</span><select onchange="wm=this.value;draw()"><option value="all"${sel('all')}>Every checkpoint</option><option value="final"${sel('final')}>Final colors only</option><option value="start"${sel('start')}>Starting colors only</option></select><span class="note">${got} of 12 hue families reached · ${neu} neutral or dark colors not plotted</span></div><div class="wh"><div class="bg"></div><svg viewBox="-100 -100 200 200">${ring}${dots}</svg></div><div class="cov">${cnt.map((n,i)=>n?`<span class="y" style="background:hsl(${i*30},70%,42%)">${HN[i]} · ${n}</span>`:`<span class="n">${HN[i]} · none yet</span>`).join('')}</div><div class="note">Dashed ring segments are hues not produced yet. Grays, near-blacks and very pale beiges are counted but sit too close to the center to plot. Click a dot to open its plant.</div>`}
-/* Fastness */
-function fastV(){const ps=W.filter(p=>p.tests.length);if(!vp||!P(vp))vp=(ps[0]||{}).id;
-const asp=['All',...new Set(W.flatMap(p=>p.tests.map(t=>t.aspect)))];
-return`<h2 style="margin-top:0">Color drift for one plant</h2><div class="bar"><select onchange="vp=this.value;draw()">${ps.map(p=>`<option value="${p.id}"${p.id==vp?' selected':''}>${esc(p.common)}</option>`).join('')}</select></div><div class="pad">${chart(P(vp))}</div>
-<div class="note">Drift = CIE76 ΔE from the starting color (see the Methods tab). Around 2.3 is barely visible; higher means the color moved more. Dots show the measured color.</div>
-<h2>Which plants hold their color?</h2><div class="bar"><span class="note">Aspect:</span><select onchange="va=this.value;draw()">${asp.map(a=>`<option${a==va?' selected':''}>${esc(a)}</option>`).join('')}</select></div>${rank()}
-<div class="note" style="margin-top:8px">The length of the bar visualizes the stability of the pigment using ΔE. Shorter bar = more stable (average Start-to-final ΔE across matching tests). Left chip is the start color, right chip is where it ended. The readings came from a colorimeter with a high margin of error, so treat this as exploratory.</div>`}
-function chart(p){if(!p||!p.tests.length)return'<div class="note">No tests recorded.</div>';
-const Wd=640,H=230,L=40,B=28,T=12,n=Math.max(...p.tests.map(t=>t.colors.length)),all=p.tests.map(drift),m=Math.max(5,...all.flat())*1.1,
-X=i=>L+(n>1?i*(Wd-L-16)/(n-1):0),Y=v=>T+(H-T-B)*(1-v/m),l0=p.tests.reduce((a,t)=>t.colors.length>a.length?t.colors:a,[]),lc=t=>LC[(TY.indexOf(t.aspect)>=0?TY.indexOf(t.aspect):3)%LC.length];
-let s=`<svg viewBox="0 0 ${Wd} ${H}" width="${Wd}">`;
-for(let k=0;k<=4;k++){const v=m*k/4;s+=`<line x1="${L}" x2="${Wd-8}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end">${v.toFixed(0)}</text>`}
-l0.forEach((c,i)=>s+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle">${esc(c.l)}</text>`);
-p.tests.forEach((t,j)=>{const col=lc(t),d=all[j];s+=`<polyline fill="none" stroke="${col}" stroke-width="2" points="${d.map((v,i)=>X(i)+','+Y(v)).join(' ')}"/>`+d.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="6" fill="${t.colors[i].h}" stroke="${col}" stroke-width="2"><title>${esc(t.aspect)} ${esc(t.colors[i].l)}: ${t.colors[i].h}, ΔE ${v.toFixed(1)}</title></circle>`).join('')});
-return s+'</svg><div class="row" style="margin-top:4px">'+p.tests.map(t=>`<span class="note"><b style="color:${lc(t)}">━</b> ${esc(t.aspect)}</span>`).join('')+'</div>'}
-function rank(){const R=W.map(p=>{const ts=p.tests.filter(t=>va=='All'||t.aspect==va);if(!ts.length)return null;const d=ts.map(t=>drift(t).pop());return{p,v:d.reduce((a,b)=>a+b,0)/d.length,s:ts[0].colors[0].h,e:last(ts[0]).h}}).filter(Boolean).sort((a,b)=>a.v-b.v);
-if(!R.length)return'<div class="note">No data for that aspect.</div>';const m=Math.max(...R.map(r=>r.v),1);
-return R.map(r=>`<div class="rk"><div class="g"><span style="background:${r.s}"></span><span style="background:${r.e}"></span></div><div><div class="b" style="width:${Math.max(2,r.v/m*100)}%"></div><div class="note">${esc(r.p.common)}</div></div><div>${r.v.toFixed(1)}</div></div>`).join('')}
-/* Placeholders */
-const ph=(t,d,l)=>`<div class="ph"><h2 style="margin-top:0">${t}</h2><p>${d}</p><div class="note">Planned fields</div><ul>${l.map(x=>`<li>${x}</li>`).join('')}</ul><div class="note">Records loaded: ${(D.concentrates||[]).length}</div></div>`;
-const concV=()=>ph('Concentrate Solutions','Placeholder window. Liquid dye concentrates will be catalogued here.',['Source plant (linked to all of its other entries)','Full extraction methodology I used, sources that inspired it, and date prepared.','Concentration and dilution ratio','Shelf-life checks over time','Color of the solution at each checkpoint']);
-const solV=()=>ph('Solution Analysis','Placeholder. Charts for the concentrate records will live here.',['Shelf life over time','Dilution versus color strength','Comparison with the dyed-wool fastness results']);
-/* Methods */
-function methV(){const Lx=[];W.forEach((p,i)=>p.tests.forEach((t,j)=>Lx.push([i+':'+j,p.common+' · '+t.aspect])));
-const[i,j]=mx.split(':').map(Number),t=(W[i]||{tests:[]}).tests[j];let ex='';
-if(t){const a=t.colors[0],b=last(t),A=lab(a.h),B=lab(b.h),f=n=>n.toFixed(2),d=B.map((v,k)=>v-A[k]),row=(c,h,v)=>`<tr><td>${esc(c)}</td><td>${h}</td><td>${f(v[0])}</td><td>${f(v[1])}</td><td>${f(v[2])}</td></tr>`;
-ex=`<table class="tb"><tr><th></th><th>Hex</th><th>L*</th><th>a*</th><th>b*</th></tr>${row(a.l,a.h,A)}${row(b.l,b.h,B)}${row('Difference','',d)}</table><div>ΔE*ab = √( (${f(d[0])})² + (${f(d[1])})² + (${f(d[2])})² ) = <b>${f(dE(a.h,b.h))}</b></div>`}
-return`<h2 style="margin-top:0">How ΔE is calculated</h2><p>Every colorimeter hex reading is converted to CIELAB, and the CIE76 color difference (ΔE*ab) is the straight-line distance between two colors in that space.</p>
-<div class="fm">1. Hex to RGB (0 to 1)
-     R = 0xRR / 255,  G = 0xGG / 255,  B = 0xBB / 255
-
-2. Linearize each channel c (sRGB inverse gamma)
-     c′ = c / 12.92                    if c ≤ 0.04045
-     c′ = ((c + 0.055) / 1.055)^2.4    otherwise
-
-3. Linear RGB to XYZ (sRGB primaries, D65)
-     X = 0.4124·R′ + 0.3576·G′ + 0.1805·B′
-     Y = 0.2126·R′ + 0.7152·G′ + 0.0722·B′
-     Z = 0.0193·R′ + 0.1192·G′ + 0.9505·B′
-
-4. Normalize by the D65 white point
-     x = X / 0.95047,  y = Y / 1.00000,  z = Z / 1.08883
-
-5. Helper function
-     f(t) = t^(1/3)             if t &gt; 0.008856
-     f(t) = 7.787·t + 16/116    otherwise
-
-6. CIELAB
-     L* = 116·f(y) − 16
-     a* = 500·(f(x) − f(y))
-     b* = 200·(f(y) − f(z))
-
-7. CIE76 color difference between color 1 and color 2
-     ΔE*ab = √( (L₂* − L₁*)² + (a₂* − a₁*)² + (b₂* − b₁*)² )</div>
-<h2>Worked example</h2><div class="bar"><select onchange="mx=this.value;draw()">${Lx.map(o=>`<option value="${o[0]}"${o[0]==mx?' selected':''}>${esc(o[1])}</option>`).join('')}</select><span class="note">Start vs. final reading</span></div>${ex}
-<h2>How the archive uses it</h2><p class="note">Drift is the ΔE between a test’s Start reading and each later checkpoint. The ranking averages the Start-to-final ΔE across the selected tests, and lower means the color moved less. A ΔE near 2.3 is roughly the smallest difference the average person can notice with the naked eye.</p>
-<p class="note">Caveats: hex values are assumed to be sRGB under D65, which adds error on top of the colorimeter’s own margin of error. CIE76 is the simplest ΔE formula and is uneven for saturated colors. This is not an ISO 105 Grey Scale or Blue Wool rating.</p>`}
-draw();
-</script></body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>BLAIR FARMS BIOTA ARCHIVE</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="w">
+      <h1>BLAIR FARMS BIOTA ARCHIVE</h1>
+      <div class="sub">Southeastern native plant dye records</div>
+      <div class="tabs" id="tabs"></div>
+      <div id="app"><div class="note">Loading…</div></div>
+      <div id="ov"></div>
+    </div>
+    <script src="app.js" defer></script>
+  </body>
+</html>

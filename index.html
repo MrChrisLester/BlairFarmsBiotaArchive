@@ -118,7 +118,7 @@ if(!R.length)return'<div class="note">No data for that aspect.</div>';const m=Ma
 return R.map(r=>`<div class="rk"><div class="g"><span style="background:${r.s}"></span><span style="background:${r.e}"></span></div><div><div class="b" style="width:${Math.max(2,r.v/m*100)}%"></div><div class="note">${esc(r.p.common)}</div></div><div>${r.v.toFixed(1)}</div></div>`).join('')}
 /* Placeholders */
 const ph=(t,d,l)=>`<div class="ph"><h2 style="margin-top:0">${t}</h2><p>${d}</p><div class="note">Planned fields</div><ul>${l.map(x=>`<li>${x}</li>`).join('')}</ul><div class="note">Records loaded: ${(D.concentrates||[]).length}</div></div>`;
-const concV=()=>ph('Concentrate Solutions','Placeholder. Liquid dye concentrates will be catalogued here.',['Source plant (linked to its wool entry)','Extraction method and date prepared','Concentration and dilution ratio','Shelf-life checks over time','Color of the solution at each checkpoint']);
+const concV=()=>ph('Concentrate Solutions','Placeholder window. Liquid dye concentrates will be catalogued here.',['Source plant (linked to all of its other entries)','Full extraction methodology I used, sources that inspired it, and date prepared.','Concentration and dilution ratio','Shelf-life checks over time','Color of the solution at each checkpoint']);
 const solV=()=>ph('Solution Analysis','Placeholder. Charts for the concentrate records will live here.',['Shelf life over time','Dilution versus color strength','Comparison with the dyed-wool fastness results']);
 /* Methods */
 function methV(){const Lx=[];W.forEach((p,i)=>p.tests.forEach((t,j)=>Lx.push([i+':'+j,p.common+' · '+t.aspect])));

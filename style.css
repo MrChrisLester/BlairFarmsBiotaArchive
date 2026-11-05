@@ -344,3 +344,50 @@ svg text {
 .tb td:first-child {
   text-align: left;
 }
+
+.ck {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 68px;
+  padding: 6px;
+  font-size: 11px;
+}
+
+.ck.on {
+  border-color: var(--acc);
+  box-shadow: 0 0 0 1px var(--acc);
+}
+
+.cs {
+  display: block;
+  width: 100%;
+  height: 28px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+}
+
+.cmp {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+
+.sq {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+.big {
+  font: 600 26px Georgia, serif;
+}
+
+details summary {
+  cursor: pointer;
+  margin: 10px 0 6px;
+}

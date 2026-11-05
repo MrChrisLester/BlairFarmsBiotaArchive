@@ -9,18 +9,27 @@ const $ = (id) => document.getElementById(id),
     );
 const TY = ["Lightfastness", "Waterfastness", "Washfastness"],
   LC = ["#e0a030", "#3b82c4", "#8a63c9", "#4aa56b", "#c9566b"];
-function lab(h) {
-  const r = [1, 3, 5]
-    .map((i) => parseInt(h.substr(i, 2), 16) / 255)
-    .map((v) =>
+function labSteps(h) {
+  const c = [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16) / 255),
+    r = c.map((v) =>
       v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4),
-    );
-  const x = (r[0] * 0.4124 + r[1] * 0.3576 + r[2] * 0.1805) / 0.95047,
-    y = r[0] * 0.2126 + r[1] * 0.7152 + r[2] * 0.0722,
-    z = (r[0] * 0.0193 + r[1] * 0.1192 + r[2] * 0.9505) / 1.08883,
-    f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
-  return [116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))];
+    ),
+    X = r[0] * 0.4124 + r[1] * 0.3576 + r[2] * 0.1805,
+    Y = r[0] * 0.2126 + r[1] * 0.7152 + r[2] * 0.0722,
+    Z = r[0] * 0.0193 + r[1] * 0.1192 + r[2] * 0.9505,
+    n = [X / 0.95047, Y, Z / 1.08883],
+    f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116),
+    F = n.map(f);
+  return {
+    c,
+    r,
+    xyz: [X, Y, Z],
+    n,
+    F,
+    lab: [116 * F[1] - 16, 500 * (F[0] - F[1]), 200 * (F[1] - F[2])],
+  };
 }
+const lab = (h) => labSteps(h).lab;
 const dE = (a, b) => {
   const p = lab(a),
     q = lab(b);
@@ -35,7 +44,10 @@ let tab = "lib",
   vp = null,
   va = "All",
   wm = "all",
-  mx = "0:0";
+  mp = null,
+  mt = 0,
+  mf = 0,
+  mto = null;
 const TABS = [
   ["lib", "Wool Library"],
   ["wheel", "Color Wheel"],
@@ -287,28 +299,91 @@ const solV = () =>
       "Comparison with the dyed-wool fastness results",
     ],
   );
+/* Worked example (plant, test, then two readings) */
+function mpSet(id) {
+  mp = id;
+  mt = 0;
+  mf = 0;
+  mto = null;
+  draw();
+}
+function mtSet(i) {
+  mt = i;
+  mf = 0;
+  mto = null;
+  draw();
+}
+function mfSet(i) {
+  mf = i;
+  draw();
+}
+function mtoSet(i) {
+  mto = i;
+  draw();
+}
+function exampleV() {
+  if (!W.length) return '<div class="note">No data loaded.</div>';
+  if (!mp || !P(mp)) {
+    mp = W[0].id;
+    mt = 0;
+    mf = 0;
+    mto = null;
+  }
+  const p = P(mp),
+    head = `<h2>Worked example</h2><p class="note">Pick a plant, pick one of its tests, then pick the two readings to compare.</p><div class="bar"><span class="note">Plant:</span><select onchange="mpSet(this.value)">${W.map((q) => `<option value="${q.id}"${q.id == mp ? " selected" : ""}>${esc(q.common)}</option>`).join("")}</select></div>`;
+  if (!p.tests.length)
+    return head + '<div class="note">No tests recorded for this plant.</div>';
+  const ti = Math.min(mt, p.tests.length - 1),
+    t = p.tests[ti],
+    n = t.colors.length,
+    from = mf < n ? mf : 0,
+    to = mto == null || mto >= n ? n - 1 : mto,
+    a = t.colors[from],
+    b = t.colors[to],
+    S = labSteps(a.h),
+    T = labSteps(b.h),
+    d = T.lab.map((v, k) => v - S.lab[k]),
+    e = dE(a.h, b.h),
+    f2 = (x) => x.toFixed(2),
+    f4 = (x) => x.toFixed(4),
+    v4 = (arr) => arr.map(f4).join(", "),
+    chips = (sel, fn) =>
+      t.colors
+        .map(
+          (c, i) =>
+            `<button class="ck${i == sel ? " on" : ""}" onclick="${fn}(${i})"><span class="cs" style="background:${c.h}"></span>${esc(c.l)}</button>`,
+        )
+        .join(""),
+    word =
+      e < 1
+        ? "not visible to most people"
+        : e < 2.3
+          ? "barely visible"
+          : e < 5
+            ? "noticeable"
+            : e < 10
+              ? "clearly different"
+              : "a very different color",
+    steps = [
+      ["1. Hex to RGB (0 to 1)", v4(S.c), v4(T.c)],
+      ["2. Linearized R′, G′, B′", v4(S.r), v4(T.r)],
+      ["3. X, Y, Z", v4(S.xyz), v4(T.xyz)],
+      ["4. Normalized x, y, z", v4(S.n), v4(T.n)],
+      ["5. f(x), f(y), f(z)", v4(S.F), v4(T.F)],
+      ["6. L*, a*, b*", S.lab.map(f2).join(", "), T.lab.map(f2).join(", ")],
+    ],
+    row = (c, h, v) =>
+      `<tr><td>${esc(c)}</td><td>${h}</td><td>${f2(v[0])}</td><td>${f2(v[1])}</td><td>${f2(v[2])}</td></tr>`;
+  return `${head}<div class="bar"><span class="note">Test:</span>${p.tests.map((x, i) => `<button class="${i == ti ? "on" : ""}" onclick="mtSet(${i})">${esc(x.aspect)}</button>`).join("")}</div>
+<div class="note">From (reference reading)</div><div class="row">${chips(from, "mfSet")}</div>
+<div class="note" style="margin-top:8px">To (reading to compare)</div><div class="row">${chips(to, "mtoSet")}</div>
+<div class="cmp"><div class="sq" style="background:${a.h}"></div><div class="note">${esc(a.l)}<br>${a.h}</div><div>→</div><div class="sq" style="background:${b.h}"></div><div class="note">${esc(b.l)}<br>${b.h}</div><div><div class="big">ΔE = ${f2(e)}</div><div class="note">${word}</div></div></div>
+<table class="tb"><tr><th></th><th>Hex</th><th>L*</th><th>a*</th><th>b*</th></tr>${row(a.l, a.h, S.lab)}${row(b.l, b.h, T.lab)}${row("Difference", "", d)}</table><div>ΔE*ab = √( (${f2(d[0])})² + (${f2(d[1])})² + (${f2(d[2])})² ) = <b>${f2(e)}</b></div>
+<details><summary>Show every step</summary><div class="pad"><table class="tb"><tr><th>Step</th><th>From: ${esc(a.l)} (${a.h})</th><th>To: ${esc(b.l)} (${b.h})</th></tr>${steps.map((s) => `<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td></tr>`).join("")}</table></div></details>
+<div class="note" style="margin-top:6px">Rough guide for the word label: under 1 is invisible, 1 to 2.3 barely visible, 2.3 to 5 noticeable, 5 to 10 clearly different, above 10 very different.</div>`;
+}
 /* Methods */
 function methV() {
-  const Lx = [];
-  W.forEach((p, i) =>
-    p.tests.forEach((t, j) =>
-      Lx.push([i + ":" + j, p.common + " · " + t.aspect]),
-    ),
-  );
-  const [i, j] = mx.split(":").map(Number),
-    t = (W[i] || { tests: [] }).tests[j];
-  let ex = "";
-  if (t) {
-    const a = t.colors[0],
-      b = last(t),
-      A = lab(a.h),
-      B = lab(b.h),
-      f = (n) => n.toFixed(2),
-      d = B.map((v, k) => v - A[k]),
-      row = (c, h, v) =>
-        `<tr><td>${esc(c)}</td><td>${h}</td><td>${f(v[0])}</td><td>${f(v[1])}</td><td>${f(v[2])}</td></tr>`;
-    ex = `<table class="tb"><tr><th></th><th>Hex</th><th>L*</th><th>a*</th><th>b*</th></tr>${row(a.l, a.h, A)}${row(b.l, b.h, B)}${row("Difference", "", d)}</table><div>ΔE*ab = √( (${f(d[0])})² + (${f(d[1])})² + (${f(d[2])})² ) = <b>${f(dE(a.h, b.h))}</b></div>`;
-  }
   return `<h2 style="margin-top:0">How ΔE is calculated</h2><p>Every colorimeter hex reading is converted to CIELAB, and the CIE76 color difference (ΔE*ab) is the straight-line distance between two colors in that space.</p>
 <div class="fm">1. Hex to RGB (0 to 1)
      R = 0xRR / 255,  G = 0xGG / 255,  B = 0xBB / 255
@@ -336,7 +411,7 @@ function methV() {
 
 7. CIE76 color difference between color 1 and color 2
      ΔE*ab = √( (L₂* − L₁*)² + (a₂* − a₁*)² + (b₂* − b₁*)² )</div>
-<h2>Worked example</h2><div class="bar"><select onchange="mx=this.value;draw()">${Lx.map((o) => `<option value="${o[0]}"${o[0] == mx ? " selected" : ""}>${esc(o[1])}</option>`).join("")}</select><span class="note">Start vs. final reading</span></div>${ex}
+${exampleV()}
 <h2>How the archive uses it</h2><p class="note">Drift is the ΔE between a test’s Start reading and each later checkpoint. The ranking averages the Start-to-final ΔE across the selected tests, and lower means the color moved less. A ΔE near 2.3 is roughly the smallest difference the average person can notice with the naked eye.</p>
 <p class="note">Caveats: hex values are assumed to be sRGB under D65, which adds error on top of the colorimeter’s own margin of error. CIE76 is the simplest ΔE formula and is uneven for saturated colors. This is not an ISO 105 Grey Scale or Blue Wool rating.</p>`;
 }

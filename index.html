@@ -104,7 +104,7 @@ const asp=['All',...new Set(W.flatMap(p=>p.tests.map(t=>t.aspect)))];
 return`<h2 style="margin-top:0">Color drift for one plant</h2><div class="bar"><select onchange="vp=this.value;draw()">${ps.map(p=>`<option value="${p.id}"${p.id==vp?' selected':''}>${esc(p.common)}</option>`).join('')}</select></div><div class="pad">${chart(P(vp))}</div>
 <div class="note">Drift = CIE76 ΔE from the starting color (see the Methods tab). Around 2.3 is barely visible; higher means the color moved more. Dots show the measured color.</div>
 <h2>Which plants hold their color?</h2><div class="bar"><span class="note">Aspect:</span><select onchange="va=this.value;draw()">${asp.map(a=>`<option${a==va?' selected':''}>${esc(a)}</option>`).join('')}</select></div>${rank()}
-<div class="note" style="margin-top:8px">Shorter bar = more stable (average Start-to-final ΔE across matching tests). Left chip is the start color, right chip is where it ended. The readings came from a colorimeter with a high margin of error, so treat this as exploratory.</div>`}
+<div class="note" style="margin-top:8px">The length of the bar visualizes the stability of the pigment using ΔE. Shorter bar = more stable (average Start-to-final ΔE across matching tests). Left chip is the start color, right chip is where it ended. The readings came from a colorimeter with a high margin of error, so treat this as exploratory.</div>`}
 function chart(p){if(!p||!p.tests.length)return'<div class="note">No tests recorded.</div>';
 const Wd=640,H=230,L=40,B=28,T=12,n=Math.max(...p.tests.map(t=>t.colors.length)),all=p.tests.map(drift),m=Math.max(5,...all.flat())*1.1,
 X=i=>L+(n>1?i*(Wd-L-16)/(n-1):0),Y=v=>T+(H-T-B)*(1-v/m),l0=p.tests.reduce((a,t)=>t.colors.length>a.length?t.colors:a,[]),lc=t=>LC[(TY.indexOf(t.aspect)>=0?TY.indexOf(t.aspect):3)%LC.length];
@@ -118,7 +118,7 @@ if(!R.length)return'<div class="note">No data for that aspect.</div>';const m=Ma
 return R.map(r=>`<div class="rk"><div class="g"><span style="background:${r.s}"></span><span style="background:${r.e}"></span></div><div><div class="b" style="width:${Math.max(2,r.v/m*100)}%"></div><div class="note">${esc(r.p.common)}</div></div><div>${r.v.toFixed(1)}</div></div>`).join('')}
 /* Placeholders */
 const ph=(t,d,l)=>`<div class="ph"><h2 style="margin-top:0">${t}</h2><p>${d}</p><div class="note">Planned fields</div><ul>${l.map(x=>`<li>${x}</li>`).join('')}</ul><div class="note">Records loaded: ${(D.concentrates||[]).length}</div></div>`;
-const concV=()=>ph('Concentrate Solutions','Placeholder. Liquid dye concentrates made from the plants in the wool library will be catalogued here.',['Source plant (linked to its wool entry)','Extraction method and date prepared','Concentration and dilution ratio','Shelf-life checks over time','Color of the solution at each checkpoint']);
+const concV=()=>ph('Concentrate Solutions','Placeholder. Liquid dye concentrates will be catalogued here.',['Source plant (linked to its wool entry)','Extraction method and date prepared','Concentration and dilution ratio','Shelf-life checks over time','Color of the solution at each checkpoint']);
 const solV=()=>ph('Solution Analysis','Placeholder. Charts for the concentrate records will live here.',['Shelf life over time','Dilution versus color strength','Comparison with the dyed-wool fastness results']);
 /* Methods */
 function methV(){const Lx=[];W.forEach((p,i)=>p.tests.forEach((t,j)=>Lx.push([i+':'+j,p.common+' · '+t.aspect])));
@@ -153,7 +153,7 @@ return`<h2 style="margin-top:0">How ΔE is calculated</h2><p>Every colorimeter h
 7. CIE76 color difference between color 1 and color 2
      ΔE*ab = √( (L₂* − L₁*)² + (a₂* − a₁*)² + (b₂* − b₁*)² )</div>
 <h2>Worked example</h2><div class="bar"><select onchange="mx=this.value;draw()">${Lx.map(o=>`<option value="${o[0]}"${o[0]==mx?' selected':''}>${esc(o[1])}</option>`).join('')}</select><span class="note">Start vs. final reading</span></div>${ex}
-<h2>How the archive uses it</h2><p class="note">Drift is the ΔE between a test’s Start reading and each later checkpoint. The ranking averages the Start-to-final ΔE across the selected tests, and lower means the color moved less. A ΔE near 2.3 is roughly the smallest difference a person can notice.</p>
+<h2>How the archive uses it</h2><p class="note">Drift is the ΔE between a test’s Start reading and each later checkpoint. The ranking averages the Start-to-final ΔE across the selected tests, and lower means the color moved less. A ΔE near 2.3 is roughly the smallest difference the average person can notice with the naked eye.</p>
 <p class="note">Caveats: hex values are assumed to be sRGB under D65, which adds error on top of the colorimeter’s own margin of error. CIE76 is the simplest ΔE formula and is uneven for saturated colors. This is not an ISO 105 Grey Scale or Blue Wool rating.</p>`}
 draw();
 </script></body></html>

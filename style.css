@@ -436,3 +436,99 @@ button.on {
     height: 100px;
   }
 }
+
+/* Solution Analysis: case studies */
+.st-grid {
+  grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+}
+
+.st-th {
+  display: block;
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  margin-bottom: 6px;
+}
+
+.st-chip {
+  display: inline-block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--acc);
+  border: 1px solid var(--acc);
+  border-radius: 99px;
+  padding: 0 8px;
+  margin-top: 4px;
+}
+
+.st-head {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.st-head img {
+  width: 200px;
+  max-width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+.st-head > div {
+  flex: 1;
+  min-width: 220px;
+}
+
+.st-h3 {
+  font: 600 14px Georgia,serif;
+  margin: 14px 0 4px;
+}
+
+.st-call {
+  border-left: 3px solid var(--acc);
+  background: var(--card);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.st-fm {
+  white-space: normal;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.st-facts th {
+  text-align: left;
+  color: var(--mute);
+  font-weight: 600;
+}
+
+.st-facts td,.st-tb td {
+  text-align: left;
+}
+
+.st-fold {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 2px 14px 10px;
+  margin: 8px 0;
+}
+
+.st-fold summary {
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.st-fold[open] summary {
+  color: var(--acc);
+}

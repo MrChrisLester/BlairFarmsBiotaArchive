@@ -48,17 +48,19 @@ let tab = "lib",
   mp = null,
   mt = 0,
   mf = 0,
-  mto = null;
+  mto = null,
+  cs = null;
 const TABS = [
   ["lib", "Wool Library"],
   ["wheel", "Color Wheel"],
   ["fast", "Fastness"],
   ["conc", "Concentrates", 1],
-  ["sol", "Solution Analysis", 1],
+  ["sol", "Solution Analysis"],
   ["meth", "Methods"],
 ];
 function go(t) {
   tab = t;
+  if (t == "sol") cs = null;
   draw();
 }
 function draw() {
@@ -293,16 +295,52 @@ const concV = () =>
       "Color of the solution at each checkpoint",
     ],
   );
-const solV = () =>
-  ph(
-    "Solution Analysis",
-    "Placeholder. Charts for the concentrate records will live here.",
-    [
-      "Shelf life over time",
-      "Dilution versus color strength",
-      "Comparison with the dyed-wool fastness results",
-    ],
-  );
+/* Solution Analysis: case studies (data.json "studies") */
+const ST = (id) => (D.studies || []).find((x) => x.id === id);
+function csOpen(id) {
+  cs = id;
+  draw();
+  window.scrollTo(0, 0);
+}
+function csBack() {
+  cs = null;
+  draw();
+  window.scrollTo(0, 0);
+}
+function blk(b) {
+  if (typeof b == "string") return `<p>${esc(b)}</p>`;
+  if (b.h3) return `<h3 class="st-h3">${esc(b.h3)}</h3>`;
+  if (b.ul) return `<ul>${b.ul.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  if (b.ol) return `<ol>${b.ol.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>`;
+  if (b.note) return `<div class="st-call">${esc(b.note)}</div>`;
+  if (b.formula) return `<div class="fm st-fm">${esc(b.formula)}</div>`;
+  if (b.facts)
+    return `<table class="tb st-facts">${b.facts.map((r) => `<tr><th>${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join("")}</table>`;
+  if (b.table)
+    return `<div class="pad"><table class="tb st-tb"><tr>${b.table.head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr>${b.table.rows.map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`;
+  return "";
+}
+const secHtml = (x) =>
+  x.fold
+    ? `<details class="st-fold"><summary>${esc(x.h)}</summary>${x.body.map(blk).join("")}</details>`
+    : `<h2>${esc(x.h)}</h2>${x.body.map(blk).join("")}`;
+const stCard = (x) =>
+  `<div class="card" onclick="csOpen('${esc(x.id)}')"><img class="st-th" src="${esc(x.image)}" alt="${esc(x.alt || "")}" loading="lazy"><b>${esc(x.title)}</b><i>${esc(x.sci)}</i><small>${esc(x.tagline)}</small><div><span class="st-chip">${esc(x.status)}</span></div></div>`;
+function studyV(x) {
+  const p = P(x.plant),
+    lib =
+      p && p.tests.length
+        ? `<h2>Dyed wool readings</h2><p class="note">From the Wool Library: part used ${esc(p.part || "not recorded")}, mordant ${esc(p.mordant || "not recorded")}. Colorimeter hex readings from the original study, with a high margin of error.</p>${p.tests.map(tHtml).join("")}<button onclick="openP('${esc(p.id)}')">Open in Wool Library</button>`
+        : "";
+  return `<div class="bar"><button onclick="csBack()">← All case studies</button></div>
+<div class="st-head"><img src="${esc(x.image)}" alt="${esc(x.alt || "")}"><div><h2 style="margin:0">${esc(x.title)}</h2><i class="note">${esc(x.sci)}</i><p style="margin:8px 0">${esc(x.tagline)}</p><span class="st-chip">${esc(x.status)}</span>${x.statusNote ? `<div class="note" style="margin-top:6px">${esc(x.statusNote)}</div>` : ""}</div></div>
+${x.sections.map(secHtml).join("")}${lib}`;
+}
+function solV() {
+  const L = D.studies || [];
+  if (cs && ST(cs)) return studyV(ST(cs));
+  return `<h2 style="margin-top:0">Solution Analysis</h2><div class="sub">Case studies: a micro research project on each plant, from botanical profile to dye results to planned experiments.</div><div class="grid st-grid">${L.map(stCard).join("") || '<div class="note">No case studies yet.</div>'}</div><div class="note" style="margin-top:10px">More plants will be added as their case studies are written. Click a study to read it.</div>`;
+}
 /* Worked example (plant, test, then two readings) */
 function mpSet(id) {
   mp = id;

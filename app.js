@@ -44,6 +44,7 @@ let tab = "lib",
   vp = null,
   va = "All",
   wm = "all",
+  wn = false,
   mp = null,
   mt = 0,
   mf = 0,
@@ -167,16 +168,19 @@ function wheelV() {
   );
   const cnt = Array(12).fill(0);
   let neu = 0,
-    dots = "";
+    dots = "",
+    dotsN = "";
   pts.forEach((o) => {
-    const [H, S, V] = hsv(o.c.h);
-    if (S < 0.15 || V < 0.15) {
+    const [H, S, V] = hsv(o.c.h),
+      neutral = S < 0.15 || V < 0.15;
+    if (neutral) {
       neu++;
-      return;
-    }
-    cnt[Math.round(H / 30) % 12]++;
-    const [x, y] = pt(S * 74, H);
-    dots += `<circle cx="${x}" cy="${y}" r="3.6" fill="${o.c.h}" stroke="#000" stroke-opacity=".55" stroke-width=".7" style="cursor:pointer" onclick="openP('${o.p.id}')"><title>${esc(o.p.common)} · ${esc(o.t.aspect)} · ${esc(o.c.l)} · ${o.c.h}</title></circle>`;
+      if (!wn) return;
+    } else cnt[Math.round(H / 30) % 12]++;
+    const [x, y] = pt(S * 74, H),
+      dot = `<circle cx="${x}" cy="${y}" r="${neutral ? 3.2 : 3.6}" fill="${o.c.h}" stroke="#000" ${neutral ? 'stroke-opacity=".85" stroke-width=".9" stroke-dasharray="1.4 1"' : 'stroke-opacity=".55" stroke-width=".7"'} style="cursor:pointer" onclick="openP('${o.p.id}')"><title>${neutral ? "(low saturation or near-black) " : ""}${esc(o.p.common)} · ${esc(o.t.aspect)} · ${esc(o.c.l)} · ${o.c.h}</title></circle>`;
+    if (neutral) dotsN += dot;
+    else dots += dot;
   });
   const ring = cnt
     .map(
@@ -186,7 +190,7 @@ function wheelV() {
     .join("");
   const got = cnt.filter((n) => n).length,
     sel = (v) => (wm == v ? " selected" : "");
-  return `<h2 style="margin-top:0">Color wheel</h2><div class="sub">Which parts of the visible spectrum the dyes reach. Angle is hue, distance from the center is saturation, and every dot is a measured color.</div><div class="bar"><span class="note">Show:</span><select onchange="wm=this.value;draw()"><option value="all"${sel("all")}>Every checkpoint</option><option value="final"${sel("final")}>Final colors only</option><option value="start"${sel("start")}>Starting colors only</option></select><span class="note">${got} of 12 hue families reached · ${neu} neutral or dark colors not plotted</span></div><div class="wh"><div class="bg"></div><svg viewBox="-100 -100 200 200">${ring}${dots}</svg></div><div class="cov">${cnt.map((n, i) => (n ? `<span class="y" style="background:hsl(${i * 30},70%,42%)">${HN[i]} · ${n}</span>` : `<span class="n">${HN[i]} · none yet</span>`)).join("")}</div><div class="note">Dashed ring segments are hues not produced yet. Grays, near-blacks and very pale beiges are counted but sit too close to the center to plot. Click a dot to open its plant.</div>`;
+  return `<h2 style="margin-top:0">Color wheel</h2><div class="sub">Which parts of the visible spectrum the dyes reach. Angle is hue, distance from the center is saturation, and every dot is a measured color.</div><div class="bar"><span class="note">Show:</span><select onchange="wm=this.value;draw()"><option value="all"${sel("all")}>Every checkpoint</option><option value="final"${sel("final")}>Final colors only</option><option value="start"${sel("start")}>Starting colors only</option></select><span class="note">${got} of 12 hue families reached · ${neu} low-saturation or near-black colors ${wn ? "shown with dashed outlines" : "not plotted"}</span><button class="${wn ? "on" : ""}" aria-pressed="${wn}" onclick="wn=!wn;draw()">${wn ? "Hide" : "Show"} low-saturation and near-black colors</button></div><div class="wh"><div class="bg"></div><svg viewBox="-100 -100 200 200">${ring}${dotsN}${dots}</svg></div><div class="cov">${cnt.map((n, i) => (n ? `<span class="y" style="background:hsl(${i * 30},70%,42%)">${HN[i]} · ${n}</span>` : `<span class="n">${HN[i]} · none yet</span>`)).join("")}</div><div class="note">Dashed ring segments are hues not produced yet. Grays, near-blacks and very pale beiges sit close to the center, where hue is unreliable, so they are ${wn ? "drawn with dashed outlines" : "left off the wheel"} and never count toward the hue families above. Click a dot to open its plant.</div>`;
 }
 /* Fastness */
 function fastV() {

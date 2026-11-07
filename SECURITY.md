@@ -49,12 +49,11 @@ There is no API, token or stored credential connecting the editor to the live si
 
 ## Repository hardening checklist
 
-- [ ] Passkey or 2FA on the GitHub account
+- [X] Passkey or 2FA on the GitHub account
 - [ ] Ruleset on `main` requiring a pull request and the "Validate data" check, with no bypass
-- [ ] Secret scanning and push protection enabled
-- [ ] Private vulnerability reporting enabled
+- [X] Secret scanning and push protection enabled
+- [X] Private vulnerability reporting enabled
 - [ ] Actions workflow permissions set to read-only by default
-- [ ] Verified domain, if a custom domain is added
 
 ## Reporting a vulnerability
 

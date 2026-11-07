@@ -532,3 +532,64 @@ button.on {
 .st-fold[open] summary {
   color: var(--acc);
 }
+
+/* Color wheel zoom and pan */
+.wh {
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  border: 1px solid transparent;
+  border-radius: 14px;
+}
+
+.wh.zoomed {
+  border-color: var(--line);
+}
+
+.wh.drag {
+  cursor: grabbing;
+}
+
+.wz {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+}
+
+.wh svg.wd {
+  pointer-events: none;
+}
+
+.wd-g {
+  pointer-events: auto;
+}
+
+.wc {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wc button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.wzl {
+  position: absolute;
+  left: 8px;
+  bottom: 6px;
+  z-index: 2;
+  font-size: 11px;
+  color: var(--mute);
+  pointer-events: none;
+}

@@ -77,6 +77,7 @@ function draw() {
     meth: methV,
   }[tab]();
   if (tab == "lib") grid();
+  if (tab == "wheel") wheelInit();
 }
 /* Library (read-only) */
 const card = (p) =>
@@ -180,7 +181,7 @@ function wheelV() {
       if (!wn) return;
     } else cnt[Math.round(H / 30) % 12]++;
     const [x, y] = pt(S * 74, H),
-      dot = `<circle cx="${x}" cy="${y}" r="${neutral ? 3.2 : 3.6}" fill="${o.c.h}" stroke="#000" ${neutral ? 'stroke-opacity=".85" stroke-width=".9" stroke-dasharray="1.4 1"' : 'stroke-opacity=".55" stroke-width=".7"'} style="cursor:pointer" onclick="openP('${o.p.id}')"><title>${neutral ? "(low saturation or near-black) " : ""}${esc(o.p.common)} · ${esc(o.t.aspect)} · ${esc(o.c.l)} · ${o.c.h}</title></circle>`;
+      dot = `<g class="wd-g" data-x="${x}" data-y="${y}" transform="translate(${wx + wz * x} ${wy + wz * y})" onclick="wdot('${o.p.id}')"><circle cx="0" cy="0" r="${neutral ? 3.2 : 3.6}" fill="${o.c.h}" stroke="#000" ${neutral ? 'stroke-opacity=".85" stroke-width=".9" stroke-dasharray="1.4 1"' : 'stroke-opacity=".55" stroke-width=".7"'} style="cursor:pointer"><title>${neutral ? "(low saturation or near-black) " : ""}${esc(o.p.common)} · ${esc(o.t.aspect)} · ${esc(o.c.l)} · ${o.c.h}</title></circle></g>`;
     if (neutral) dotsN += dot;
     else dots += dot;
   });
@@ -192,7 +193,177 @@ function wheelV() {
     .join("");
   const got = cnt.filter((n) => n).length,
     sel = (v) => (wm == v ? " selected" : "");
-  return `<h2 style="margin-top:0">Color wheel</h2><div class="sub">Which parts of the visible spectrum the dyes reach. Angle is hue, distance from the center is saturation, and every dot is a measured color.</div><div class="bar"><span class="note">Show:</span><select onchange="wm=this.value;draw()"><option value="all"${sel("all")}>Every checkpoint</option><option value="final"${sel("final")}>Final colors only</option><option value="start"${sel("start")}>Starting colors only</option></select><span class="note">${got} of 12 hue families reached · ${neu} low-saturation or near-black colors ${wn ? "shown with dashed outlines" : "not plotted"}</span><button class="${wn ? "on" : ""}" aria-pressed="${wn}" onclick="wn=!wn;draw()">${wn ? "Hide" : "Show"} low-saturation and near-black colors</button></div><div class="wh"><div class="bg"></div><svg viewBox="-100 -100 200 200">${ring}${dotsN}${dots}</svg></div><div class="cov">${cnt.map((n, i) => (n ? `<span class="y" style="background:hsl(${i * 30},70%,42%)">${HN[i]} · ${n}</span>` : `<span class="n">${HN[i]} · none yet</span>`)).join("")}</div><div class="note">Dashed ring segments are hues not produced yet. Grays, near-blacks and very pale beiges sit close to the center, where hue is unreliable, so they are ${wn ? "drawn with dashed outlines" : "left off the wheel"} and never count toward the hue families above. Click a dot to open its plant.</div>`;
+  return `<h2 style="margin-top:0">Color wheel</h2><div class="sub">Which parts of the visible spectrum the dyes reach. Angle is hue, distance from the center is saturation, and every dot is a measured color.</div><div class="bar"><span class="note">Show:</span><select onchange="wm=this.value;draw()"><option value="all"${sel("all")}>Every checkpoint</option><option value="final"${sel("final")}>Final colors only</option><option value="start"${sel("start")}>Starting colors only</option></select><span class="note">${got} of 12 hue families reached · ${neu} low-saturation or near-black colors ${wn ? "shown with dashed outlines" : "not plotted"}</span><button class="${wn ? "on" : ""}" aria-pressed="${wn}" onclick="wn=!wn;draw()">${wn ? "Hide" : "Show"} low-saturation and near-black colors</button></div><div class="wh${wz > 1.001 ? " zoomed" : ""}" id="wh" tabindex="0" role="group" aria-label="Color wheel. Scroll or pinch to zoom, drag to pan, plus and minus keys to zoom, zero to reset." style="touch-action:${wz > 1.001 ? "none" : "pan-y"}"><div class="wz" id="wz" style="transform:translate(${wx / 2}%,${wy / 2}%) scale(${wz})"><div class="bg"></div><svg viewBox="-100 -100 200 200">${ring}</svg></div><svg class="wd" viewBox="-100 -100 200 200">${dotsN}${dots}</svg><div class="wc"><button onclick="wZoom(1.6)" aria-label="Zoom in" title="Zoom in">+</button><button onclick="wZoom(1/1.6)" aria-label="Zoom out" title="Zoom out">−</button><button onclick="wReset()" aria-label="Reset view" title="Reset view">↺</button></div><span class="wzl" id="wzl">${wz.toFixed(1)}×</span></div><div class="cov">${cnt.map((n, i) => (n ? `<span class="y" style="background:hsl(${i * 30},70%,42%)">${HN[i]} · ${n}</span>` : `<span class="n">${HN[i]} · none yet</span>`)).join("")}</div><div class="note">Dashed ring segments are hues not produced yet. Grays, near-blacks and very pale beiges sit close to the center, where hue is unreliable, so they are ${wn ? "drawn with dashed outlines" : "left off the wheel"} and never count toward the hue families above. Click a dot to open its plant. Scroll or pinch to zoom and drag to pan; dots keep the same size as you zoom, so they spread apart instead of growing.</div>`;
+}
+/* Color wheel zoom and pan. The ring and background are scaled by CSS; dots live in a
+   separate overlay and are only repositioned, so they never change size. Units are
+   viewBox units (the wheel spans -100..100), so the view survives window resizes. */
+let wz = 1,
+  wx = 0,
+  wy = 0,
+  wmoved = false,
+  wraf = 0;
+const WMAX = 20;
+function wClamp() {
+  wz = Math.min(WMAX, Math.max(1, wz));
+  if (wz < 1.001) {
+    wz = 1;
+    wx = wy = 0;
+    return;
+  }
+  const L = 100 * (wz - 1) + 30;
+  wx = Math.max(-L, Math.min(L, wx));
+  wy = Math.max(-L, Math.min(L, wy));
+}
+function wApply() {
+  const wh = $("wh");
+  if (!wh) return;
+  $("wz").style.transform = `translate(${wx / 2}%,${wy / 2}%) scale(${wz})`;
+  wh.querySelectorAll("g.wd-g").forEach((g) =>
+    g.setAttribute(
+      "transform",
+      `translate(${wx + wz * g.dataset.x} ${wy + wz * g.dataset.y})`,
+    ),
+  );
+  $("wzl").textContent = wz.toFixed(1) + "×";
+  wh.classList.toggle("zoomed", wz > 1.001);
+  wh.style.touchAction = wz > 1.001 ? "none" : "pan-y";
+}
+const wSchedule = () => {
+  if (!wraf)
+    wraf = requestAnimationFrame(() => {
+      wraf = 0;
+      wApply();
+    });
+};
+/* zoom by factor f, keeping the point (sx, sy) in view units fixed on screen */
+function wZoomAt(f, sx, sy) {
+  const z0 = wz,
+    z1 = Math.min(WMAX, Math.max(1, z0 * f)),
+    k = z1 / z0;
+  wz = z1;
+  wx = sx - k * (sx - wx);
+  wy = sy - k * (sy - wy);
+  wClamp();
+}
+function wZoom(f) {
+  wZoomAt(f, 0, 0);
+  wApply();
+}
+function wReset() {
+  wz = 1;
+  wx = wy = 0;
+  wApply();
+}
+const wdot = (id) => {
+  if (!wmoved) openP(id);
+};
+function wheelInit() {
+  const wh = $("wh");
+  if (!wh) return;
+  const ptrs = new Map(),
+    units = (x, y) => {
+      const r = wh.getBoundingClientRect();
+      return [((x - r.left) / r.width) * 200 - 100, ((y - r.top) / r.height) * 200 - 100];
+    },
+    two = () => {
+      const [a, b] = [...ptrs.values()];
+      return { d: Math.hypot(a.x - b.x, a.y - b.y), m: units((a.x + b.x) / 2, (a.y + b.y) / 2) };
+    };
+  let drag = null,
+    pinch = null;
+  wh.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".wc") || (e.pointerType == "mouse" && e.button != 0)) return;
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    wmoved = false;
+    if (ptrs.size == 1)
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, wx, wy, on: false };
+    else if (ptrs.size == 2) {
+      const t = two();
+      pinch = { d: t.d, z: wz, x: wx, y: wy, m: t.m };
+      drag = null;
+      wmoved = true;
+    }
+  });
+  wh.addEventListener("pointermove", (e) => {
+    const p = ptrs.get(e.pointerId);
+    if (!p) return;
+    p.x = e.clientX;
+    p.y = e.clientY;
+    if (pinch && ptrs.size >= 2) {
+      const t = two(),
+        z1 = Math.min(WMAX, Math.max(1, (pinch.z * t.d) / pinch.d)),
+        k = z1 / pinch.z;
+      wz = z1;
+      wx = t.m[0] - k * (pinch.m[0] - pinch.x);
+      wy = t.m[1] - k * (pinch.m[1] - pinch.y);
+      wClamp();
+      wSchedule();
+    } else if (drag && drag.id == e.pointerId) {
+      const dx = e.clientX - drag.x,
+        dy = e.clientY - drag.y;
+      if (!drag.on) {
+        if (Math.hypot(dx, dy) < 5) return;
+        drag.on = true;
+        wmoved = true;
+        wh.classList.add("drag");
+        try {
+          wh.setPointerCapture(e.pointerId);
+        } catch (_) {}
+      }
+      const k = 200 / wh.getBoundingClientRect().width;
+      wx = drag.wx + dx * k;
+      wy = drag.wy + dy * k;
+      wClamp();
+      wSchedule();
+    }
+  });
+  const up = (e) => {
+    if (!ptrs.delete(e.pointerId)) return;
+    pinch = null;
+    if (ptrs.size == 1) {
+      const [id, p] = [...ptrs.entries()][0];
+      drag = { id, x: p.x, y: p.y, wx, wy, on: true };
+    } else {
+      drag = null;
+      wh.classList.remove("drag");
+    }
+  };
+  wh.addEventListener("pointerup", up);
+  wh.addEventListener("pointercancel", up);
+  wh.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      const [sx, sy] = units(e.clientX, e.clientY),
+        px = e.deltaMode == 1 ? e.deltaY * 16 : e.deltaY;
+      wZoomAt(Math.exp(-px * (e.ctrlKey ? 0.01 : 0.002)), sx, sy);
+      wSchedule();
+    },
+    { passive: false },
+  );
+  wh.addEventListener("keydown", (e) => {
+    const s = 12 / wz + 4,
+      K = {
+        "+": () => wZoomAt(1.4, 0, 0),
+        "=": () => wZoomAt(1.4, 0, 0),
+        "-": () => wZoomAt(1 / 1.4, 0, 0),
+        _: () => wZoomAt(1 / 1.4, 0, 0),
+        0: () => {
+          wz = 1;
+          wx = wy = 0;
+        },
+        ArrowLeft: () => (wx += s * wz),
+        ArrowRight: () => (wx -= s * wz),
+        ArrowUp: () => (wy += s * wz),
+        ArrowDown: () => (wy -= s * wz),
+      };
+    if (!K[e.key]) return;
+    e.preventDefault();
+    K[e.key]();
+    wClamp();
+    wApply();
+  });
 }
 /* Fastness */
 function fastV() {

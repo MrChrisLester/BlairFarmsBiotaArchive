@@ -593,3 +593,91 @@ button.on {
   color: var(--mute);
   pointer-events: none;
 }
+
+/* Methods: typeset derivation */
+.ms {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+  display: grid;
+  gap: 10px;
+}
+
+.mstep {
+  display: grid;
+  grid-template-columns: 30px minmax(0,1fr);
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.mstep.last {
+  border-color: var(--acc);
+}
+
+.mnum {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--acc);
+  color: var(--card);
+  font: 600 14px Georgia, serif;
+  display: grid;
+  place-items: center;
+}
+
+.mstep h3 {
+  font: 600 15px Georgia, serif;
+  margin: 3px 0 2px;
+}
+
+.mstep p {
+  margin: 0 0 6px;
+}
+
+.eqw {
+  overflow-x: auto;
+  padding: 4px 2px;
+}
+
+math {
+  font-family: "STIX Two Math", "Cambria Math", "Latin Modern Math", "Noto Sans Math", math, serif;
+  font-size: 1.2em;
+  color: var(--ink);
+}
+
+mtext {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: .78em;
+  color: var(--mute);
+}
+
+mtext.hx {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: .72em;
+  color: var(--acc);
+}
+
+math mtable.cases mtd {
+  text-align: left;
+  padding: .25em .6em;
+}
+
+math mtable.mat mtd {
+  text-align: center;
+  padding: .15em .5em;
+}
+
+math mtable.al mtd {
+  padding: .2em .25em;
+}
+
+math mtable.al mtd:first-child {
+  text-align: right;
+}
+
+math mtable.al mtd:last-child {
+  text-align: left;
+}

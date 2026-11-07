@@ -596,34 +596,111 @@ function exampleV() {
 <div class="note" style="margin-top:6px">Rough guide for the word label: under 1 is invisible, 1 to 2.3 barely visible, 2.3 to 5 noticeable, 5 to 10 clearly different, above 10 very different.</div>`;
 }
 /* Methods */
+/* Methods: the ΔE derivation, typeset as MathML (native in current browsers) */
+const M = {
+  i: (x) => `<mi>${x}</mi>`,
+  up: (x) => `<mi mathvariant="normal">${x}</mi>`,
+  n: (x) => `<mn>${x}</mn>`,
+  o: (x) => `<mo>${x}</mo>`,
+  t: (x) => `<mtext>${x}</mtext>`,
+  hx: (x) => `<mtext class="hx">${x}</mtext>`,
+  gap: (w = 1.6) => `<mspace width="${w}em"></mspace>`,
+  r: (...a) => `<mrow>${a.join("")}</mrow>`,
+  sub: (a, b) => `<msub>${a}${b}</msub>`,
+  sup: (a, b) => `<msup>${a}${b}</msup>`,
+  ss: (a, b, c) => `<msubsup>${a}${b}${c}</msubsup>`,
+  fr: (a, b) => `<mfrac>${a}${b}</mfrac>`,
+  tbl: (cls, rows) =>
+    `<mtable class="${cls}">${rows.map((r) => `<mtr>${r.map((c) => `<mtd>${c}</mtd>`).join("")}</mtr>`).join("")}</mtable>`,
+};
+const MS = (() => {
+  const { i, up, n, o, t, hx, gap, r, sup, ss, fr, tbl } = M,
+    pr = (x) => sup(i(x), o("′")),
+    star = (x, k) => ss(i(x), n(k), o("∗")),
+    paren = (...a) => r(o("("), ...a, o(")")),
+    eq = (x) => `<div class="eqw"><math display="block">${x}</math></div>`,
+    cases = (rows) => r(o("{"), tbl("cases", rows)),
+    matrix = (rows) => r(o("["), tbl("mat", rows), o("]")),
+    sq = (a) => sup(paren(star(a, 2), o("−"), star(a, 1)), n(2));
+  return [
+    [
+      "Hex to RGB",
+      "Each pair of hex digits is one 8-bit channel. Divide by 255 to get a value from 0 to 1.",
+      eq(r(i("R"), o("="), fr(hx("0xRR"), n(255)), gap(), i("G"), o("="), fr(hx("0xGG"), n(255)), gap(), i("B"), o("="), fr(hx("0xBB"), n(255)))),
+    ],
+    [
+      "Linearize each channel",
+      "Undo the sRGB gamma curve. Here c stands for any one channel (R, G or B), which gives R′, G′ and B′.",
+      eq(
+        r(
+          pr("c"),
+          o("="),
+          cases([
+            [fr(i("c"), n("12.92")), r(t("if"), gap(0.4), i("c"), o("≤"), n("0.04045"))],
+            [sup(paren(fr(r(i("c"), o("+"), n("0.055")), n("1.055"))), n("2.4")), t("otherwise")],
+          ]),
+        ),
+      ),
+    ],
+    [
+      "Linear RGB to XYZ",
+      "Mix the linear channels using the sRGB primaries and the D65 white point.",
+      eq(
+        r(
+          matrix([[i("X")], [i("Y")], [i("Z")]]),
+          o("="),
+          matrix([
+            [n("0.4124"), n("0.3576"), n("0.1805")],
+            [n("0.2126"), n("0.7152"), n("0.0722")],
+            [n("0.0193"), n("0.1192"), n("0.9505")],
+          ]),
+          matrix([[pr("R")], [pr("G")], [pr("B")]]),
+        ),
+      ),
+    ],
+    [
+      "Normalize by the white point",
+      "Divide by the D65 reference white.",
+      eq(r(i("x"), o("="), fr(i("X"), n("0.95047")), gap(), i("y"), o("="), fr(i("Y"), n("1.00000")), gap(), i("z"), o("="), fr(i("Z"), n("1.08883")))),
+    ],
+    [
+      "Helper function",
+      "A cube root for most values, with a straight-line segment near black.",
+      eq(
+        r(
+          i("f"),
+          paren(i("t")),
+          o("="),
+          cases([
+            [`<mroot>${i("t")}${n(3)}</mroot>`, r(t("if"), gap(0.4), i("t"), o("&gt;"), n("0.008856"))],
+            [r(n("7.787"), o("·"), i("t"), o("+"), fr(n(16), n(116))), t("otherwise")],
+          ]),
+        ),
+      ),
+    ],
+    [
+      "CIELAB",
+      "L∗ is lightness, a∗ runs from green to red, and b∗ runs from blue to yellow.",
+      eq(
+        tbl("al", [
+          [sup(i("L"), o("∗")), r(o("="), n(116), i("f"), paren(i("y")), o("−"), n(16))],
+          [sup(i("a"), o("∗")), r(o("="), n(500), paren(i("f"), paren(i("x")), o("−"), i("f"), paren(i("y"))))],
+          [sup(i("b"), o("∗")), r(o("="), n(200), paren(i("f"), paren(i("y")), o("−"), i("f"), paren(i("z"))))],
+        ]),
+      ),
+    ],
+    [
+      "CIE76 color difference",
+      "The straight-line distance between two colors in Lab space. Steps 1 to 6 run on each reading, then this compares color 1 with color 2.",
+      eq(r(up("Δ"), ss(i("E"), i("ab"), o("∗")), o("="), `<msqrt>${r(sq("L"), o("+"), sq("a"), o("+"), sq("b"))}</msqrt>`)),
+    ],
+  ];
+})();
+const mathV = () =>
+  `<ol class="ms">${MS.map((s, k) => `<li class="mstep${k == MS.length - 1 ? " last" : ""}"><span class="mnum">${k + 1}</span><div><h3>${s[0]}</h3><p class="note">${s[1]}</p>${s[2]}</div></li>`).join("")}</ol>`;
 function methV() {
   return `<h2 style="margin-top:0">How ΔE is calculated</h2><p>Every colorimeter hex reading is converted to CIELAB, and the CIE76 color difference (ΔE*ab) is the straight-line distance between two colors in that space.</p>
-<div class="fm">1. Hex to RGB (0 to 1)
-     R = 0xRR / 255,  G = 0xGG / 255,  B = 0xBB / 255
-
-2. Linearize each channel c (sRGB inverse gamma)
-     c′ = c / 12.92                    if c ≤ 0.04045
-     c′ = ((c + 0.055) / 1.055)^2.4    otherwise
-
-3. Linear RGB to XYZ (sRGB primaries, D65)
-     X = 0.4124·R′ + 0.3576·G′ + 0.1805·B′
-     Y = 0.2126·R′ + 0.7152·G′ + 0.0722·B′
-     Z = 0.0193·R′ + 0.1192·G′ + 0.9505·B′
-
-4. Normalize by the D65 white point
-     x = X / 0.95047,  y = Y / 1.00000,  z = Z / 1.08883
-
-5. Helper function
-     f(t) = t^(1/3)             if t &gt; 0.008856
-     f(t) = 7.787·t + 16/116    otherwise
-
-6. CIELAB
-     L* = 116·f(y) − 16
-     a* = 500·(f(x) − f(y))
-     b* = 200·(f(y) − f(z))
-
-7. CIE76 color difference between color 1 and color 2
-     ΔE*ab = √( (L₂* − L₁*)² + (a₂* − a₁*)² + (b₂* − b₁*)² )</div>
+${mathV()}
 ${exampleV()}
 <h2>How the archive uses it</h2><p class="note">Drift is the ΔE between a test’s Start reading and each later checkpoint. The ranking averages the Start-to-final ΔE across the selected tests, and lower means the color moved less. A ΔE near 2.3 is roughly the smallest difference the average person can notice with the naked eye.</p>
 <p class="note">Caveats: hex values are assumed to be sRGB under D65, which adds error on top of the colorimeter’s own margin of error. CIE76 is the simplest ΔE formula and is uneven for saturated colors. This is not an ISO 105 Grey Scale or Blue Wool rating.</p>`;

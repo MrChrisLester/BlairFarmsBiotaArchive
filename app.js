@@ -66,7 +66,7 @@ function go(t) {
 function draw() {
   $("tabs").innerHTML = TABS.map(
     (t) =>
-      `<button class="${t[0] == tab ? "on" : ""}" onclick="go('${t[0]}')">${t[1]}${t[2] ? '<span class="soon">soon</span>' : ""}</button>`,
+      `<button class="${t[0] == tab ? "on" : ""}" data-act="go" data-a="${t[0]}">${t[1]}${t[2] ? '<span class="soon">soon</span>' : ""}</button>`,
   ).join("");
   $("app").innerHTML = {
     lib: libV,
@@ -81,9 +81,9 @@ function draw() {
 }
 /* Library (read-only) */
 const card = (p) =>
-  `<div class="card" onclick="openP('${p.id}')"><div class="sw" style="background:${p.tests[0] ? p.tests[0].colors[0].h : "#ccc"}"></div><b>${esc(p.common)}</b><i>${esc(p.sci)}</i><small>${esc(p.part)} · ${p.tests.length} test${p.tests.length == 1 ? "" : "s"}</small><div class="strip">${p.tests.map((t) => `<span title="${esc(t.aspect)}: final color" style="background:${last(t).h}"></span>`).join("")}</div></div>`;
+  `<div class="card" data-act="openP" data-a="${esc(p.id)}"><div class="sw" style="background:${p.tests[0] ? p.tests[0].colors[0].h : "#ccc"}"></div><b>${esc(p.common)}</b><i>${esc(p.sci)}</i><small>${esc(p.part)} · ${p.tests.length} test${p.tests.length == 1 ? "" : "s"}</small><div class="strip">${p.tests.map((t) => `<span title="${esc(t.aspect)}: final color" style="background:${last(t).h}"></span>`).join("")}</div></div>`;
 function libV() {
-  return `<div class="bar"><input style="flex:1;min-width:160px" placeholder="Search by common or scientific name…" value="${esc(q)}" oninput="q=this.value;grid()"><span class="note">${W.length} plants · dyed wool</span></div><div class="grid" id="g"></div><div class="note" style="margin-top:10px">Big swatch = starting color on the wool. Small swatches = final color after each test. Source: original study (Fig. 3), colorimeter hex readings.</div>`;
+  return `<div class="bar"><input style="flex:1;min-width:160px" placeholder="Search by common or scientific name…" value="${esc(q)}" data-act="search"><span class="note">${W.length} plants · dyed wool</span></div><div class="grid" id="g"></div><div class="note" style="margin-top:10px">Big swatch = starting color on the wool. Small swatches = final color after each test. Source: original study (Fig. 3), colorimeter hex readings.</div>`;
 }
 function grid() {
   const L = W.filter((p) =>
@@ -111,7 +111,7 @@ function modal() {
   }
   const p = P(cur);
   $("ov").innerHTML =
-    `<div class="ov" onclick="if(event.target==this)closeP()"><div class="md"><div class="row" style="justify-content:space-between;align-items:center"><div><h2 style="margin:0">${esc(p.common)}</h2><i class="note">${esc(p.sci)}</i></div><button onclick="closeP()">Close</button></div>
+    `<div class="ov" data-act="closeOv"><div class="md"><div class="row" style="justify-content:space-between;align-items:center"><div><h2 style="margin:0">${esc(p.common)}</h2><i class="note">${esc(p.sci)}</i></div><button data-act="closeP">Close</button></div>
 <p class="note">Part used: ${esc(p.part || "not recorded")} · Mordant: ${esc(p.mordant || "not recorded")}${p.notes ? " · " + esc(p.notes) : ""}</p><h2>Tests</h2>${p.tests.map(tHtml).join("") || '<div class="note">No tests recorded.</div>'}</div></div>`;
 }
 /* Color wheel */
@@ -181,7 +181,7 @@ function wheelV() {
       if (!wn) return;
     } else cnt[Math.round(H / 30) % 12]++;
     const [x, y] = pt(S * 74, H),
-      dot = `<g class="wd-g" data-x="${x}" data-y="${y}" transform="translate(${wx + wz * x} ${wy + wz * y})" onclick="wdot('${o.p.id}')"><circle cx="0" cy="0" r="${neutral ? 3.2 : 3.6}" fill="${o.c.h}" stroke="#000" ${neutral ? 'stroke-opacity=".85" stroke-width=".9" stroke-dasharray="1.4 1"' : 'stroke-opacity=".55" stroke-width=".7"'} style="cursor:pointer"><title>${neutral ? "(low saturation or near-black) " : ""}${esc(o.p.common)} · ${esc(o.t.aspect)} · ${esc(o.c.l)} · ${o.c.h}</title></circle></g>`;
+      dot = `<g class="wd-g" data-x="${x}" data-y="${y}" transform="translate(${wx + wz * x} ${wy + wz * y})" data-act="wdot" data-a="${esc(o.p.id)}"><circle cx="0" cy="0" r="${neutral ? 3.2 : 3.6}" fill="${o.c.h}" stroke="#000" ${neutral ? 'stroke-opacity=".85" stroke-width=".9" stroke-dasharray="1.4 1"' : 'stroke-opacity=".55" stroke-width=".7"'} style="cursor:pointer"><title>${neutral ? "(low saturation or near-black) " : ""}${esc(o.p.common)} · ${esc(o.t.aspect)} · ${esc(o.c.l)} · ${o.c.h}</title></circle></g>`;
     if (neutral) dotsN += dot;
     else dots += dot;
   });
@@ -193,7 +193,7 @@ function wheelV() {
     .join("");
   const got = cnt.filter((n) => n).length,
     sel = (v) => (wm == v ? " selected" : "");
-  return `<h2 style="margin-top:0">Color wheel</h2><div class="sub">Which parts of the visible spectrum the dyes reach. Angle is hue, distance from the center is saturation, and every dot is a measured color.</div><div class="bar"><span class="note">Show:</span><select onchange="wm=this.value;draw()"><option value="all"${sel("all")}>Every checkpoint</option><option value="final"${sel("final")}>Final colors only</option><option value="start"${sel("start")}>Starting colors only</option></select><span class="note">${got} of 12 hue families reached · ${neu} low-saturation or near-black colors ${wn ? "shown with dashed outlines" : "not plotted"}</span><button class="${wn ? "on" : ""}" aria-pressed="${wn}" onclick="wn=!wn;draw()">${wn ? "Hide" : "Show"} low-saturation and near-black colors</button></div><div class="wh${wz > 1.001 ? " zoomed" : ""}" id="wh" tabindex="0" role="group" aria-label="Color wheel. Scroll or pinch to zoom, drag to pan, plus and minus keys to zoom, zero to reset." style="touch-action:${wz > 1.001 ? "none" : "pan-y"}"><div class="wz" id="wz" style="transform:translate(${wx / 2}%,${wy / 2}%) scale(${wz})"><div class="bg"></div><svg viewBox="-100 -100 200 200">${ring}</svg></div><svg class="wd" viewBox="-100 -100 200 200">${dotsN}${dots}</svg><div class="wc"><button onclick="wZoom(1.6)" aria-label="Zoom in" title="Zoom in">+</button><button onclick="wZoom(1/1.6)" aria-label="Zoom out" title="Zoom out">−</button><button onclick="wReset()" aria-label="Reset view" title="Reset view">↺</button></div><span class="wzl" id="wzl">${wz.toFixed(1)}×</span></div><div class="cov">${cnt.map((n, i) => (n ? `<span class="y" style="background:hsl(${i * 30},70%,42%)">${HN[i]} · ${n}</span>` : `<span class="n">${HN[i]} · none yet</span>`)).join("")}</div><div class="note">Dashed ring segments are hues not produced yet. Grays, near-blacks and very pale beiges sit close to the center, where hue is unreliable, so they are ${wn ? "drawn with dashed outlines" : "left off the wheel"} and never count toward the hue families above. Click a dot to open its plant. Scroll or pinch to zoom and drag to pan; dots keep the same size as you zoom, so they spread apart instead of growing.</div>`;
+  return `<h2 style="margin-top:0">Color wheel</h2><div class="sub">Which parts of the visible spectrum the dyes reach. Angle is hue, distance from the center is saturation, and every dot is a measured color.</div><div class="bar"><span class="note">Show:</span><select data-act="setWm"><option value="all"${sel("all")}>Every checkpoint</option><option value="final"${sel("final")}>Final colors only</option><option value="start"${sel("start")}>Starting colors only</option></select><span class="note">${got} of 12 hue families reached · ${neu} low-saturation or near-black colors ${wn ? "shown with dashed outlines" : "not plotted"}</span><button class="${wn ? "on" : ""}" aria-pressed="${wn}" data-act="toggleN">${wn ? "Hide" : "Show"} low-saturation and near-black colors</button></div><div class="wh${wz > 1.001 ? " zoomed" : ""}" id="wh" tabindex="0" role="group" aria-label="Color wheel. Scroll or pinch to zoom, drag to pan, plus and minus keys to zoom, zero to reset." style="touch-action:${wz > 1.001 ? "none" : "pan-y"}"><div class="wz" id="wz" style="transform:translate(${wx / 2}%,${wy / 2}%) scale(${wz})"><div class="bg"></div><svg viewBox="-100 -100 200 200">${ring}</svg></div><svg class="wd" viewBox="-100 -100 200 200">${dotsN}${dots}</svg><div class="wc"><button data-act="wZoom" data-a="1.6" aria-label="Zoom in" title="Zoom in">+</button><button data-act="wZoom" data-a="0.625" aria-label="Zoom out" title="Zoom out">−</button><button data-act="wReset" aria-label="Reset view" title="Reset view">↺</button></div><span class="wzl" id="wzl">${wz.toFixed(1)}×</span></div><div class="cov">${cnt.map((n, i) => (n ? `<span class="y" style="background:hsl(${i * 30},70%,42%)">${HN[i]} · ${n}</span>` : `<span class="n">${HN[i]} · none yet</span>`)).join("")}</div><div class="note">Dashed ring segments are hues not produced yet. Grays, near-blacks and very pale beiges sit close to the center, where hue is unreliable, so they are ${wn ? "drawn with dashed outlines" : "left off the wheel"} and never count toward the hue families above. Click a dot to open its plant. Scroll or pinch to zoom and drag to pan; dots keep the same size as you zoom, so they spread apart instead of growing.</div>`;
 }
 /* Color wheel zoom and pan. The ring and background are scaled by CSS; dots live in a
    separate overlay and are only repositioned, so they never change size. Units are
@@ -373,9 +373,9 @@ function fastV() {
     "All",
     ...new Set(W.flatMap((p) => p.tests.map((t) => t.aspect))),
   ];
-  return `<h2 style="margin-top:0">Color drift for one plant</h2><div class="bar"><select onchange="vp=this.value;draw()">${ps.map((p) => `<option value="${p.id}"${p.id == vp ? " selected" : ""}>${esc(p.common)}</option>`).join("")}</select></div><div class="pad">${chart(P(vp))}</div>
+  return `<h2 style="margin-top:0">Color drift for one plant</h2><div class="bar"><select data-act="setVp">${ps.map((p) => `<option value="${esc(p.id)}"${p.id == vp ? " selected" : ""}>${esc(p.common)}</option>`).join("")}</select></div><div class="pad">${chart(P(vp))}</div>
 <div class="note">Drift = CIE76 ΔE from the starting color (see the Methods tab). Around 2.3 is barely visible; higher means the color moved more. Dots show the measured color.</div>
-<h2>Which plants hold their color?</h2><div class="bar"><span class="note">Aspect:</span><select onchange="va=this.value;draw()">${asp.map((a) => `<option${a == va ? " selected" : ""}>${esc(a)}</option>`).join("")}</select></div>${rank()}
+<h2>Which plants hold their color?</h2><div class="bar"><span class="note">Aspect:</span><select data-act="setVa">${asp.map((a) => `<option${a == va ? " selected" : ""}>${esc(a)}</option>`).join("")}</select></div>${rank()}
 <div class="note" style="margin-top:8px">The length of the bar visualizes the stability of the pigment using ΔE. Shorter bar = more stable (average Start-to-final ΔE across matching tests). Left chip is the start color, right chip is where it ended. The readings came from a colorimeter with a high margin of error, so treat this as exploratory.</div>`;
 }
 function chart(p) {
@@ -453,7 +453,7 @@ function rank() {
 }
 /* Placeholders */
 const ph = (t, d, l) =>
-  `<div class="ph"><h2 style="margin-top:0">${t}</h2><p>${d}</p><div class="note">Planned fields</div><ul>${l.map((x) => `<li>${x}</li>`).join("")}</ul><div class="note">Records loaded: ${(D.concentrates || []).length}</div></div>`;
+  `<div class="ph"><h2 style="margin-top:0">${esc(t)}</h2><p>${esc(d)}</p><div class="note">Planned fields</div><ul>${l.map((x) => `<li>${esc(x)}</li>`).join("")}</ul><div class="note">Records loaded: ${(D.concentrates || []).length}</div></div>`;
 const concV = () =>
   ph(
     "Concentrate Solutions",
@@ -496,14 +496,14 @@ const secHtml = (x) =>
     ? `<details class="st-fold"><summary>${esc(x.h)}</summary>${x.body.map(blk).join("")}</details>`
     : `<h2>${esc(x.h)}</h2>${x.body.map(blk).join("")}`;
 const stCard = (x) =>
-  `<div class="card" onclick="csOpen('${esc(x.id)}')"><img class="st-th" src="${esc(x.image)}" alt="${esc(x.alt || "")}" loading="lazy"><b>${esc(x.title)}</b><i>${esc(x.sci)}</i><small>${esc(x.tagline)}</small><div><span class="st-chip">${esc(x.status)}</span></div></div>`;
+  `<div class="card" data-act="csOpen" data-a="${esc(x.id)}"><img class="st-th" src="${esc(x.image)}" alt="${esc(x.alt || "")}" loading="lazy"><b>${esc(x.title)}</b><i>${esc(x.sci)}</i><small>${esc(x.tagline)}</small><div><span class="st-chip">${esc(x.status)}</span></div></div>`;
 function studyV(x) {
   const p = P(x.plant),
     lib =
       p && p.tests.length
-        ? `<h2>Dyed wool readings</h2><p class="note">From the Wool Library: part used ${esc(p.part || "not recorded")}, mordant ${esc(p.mordant || "not recorded")}. Colorimeter hex readings from the original study, with a high margin of error.</p>${p.tests.map(tHtml).join("")}<button onclick="openP('${esc(p.id)}')">Open in Wool Library</button>`
+        ? `<h2>Dyed wool readings</h2><p class="note">From the Wool Library: part used ${esc(p.part || "not recorded")}, mordant ${esc(p.mordant || "not recorded")}. Colorimeter hex readings from the original study, with a high margin of error.</p>${p.tests.map(tHtml).join("")}<button data-act="openP" data-a="${esc(p.id)}">Open in Wool Library</button>`
         : "";
-  return `<div class="bar"><button onclick="csBack()">← All case studies</button></div>
+  return `<div class="bar"><button data-act="csBack">← All case studies</button></div>
 <div class="st-head"><img src="${esc(x.image)}" alt="${esc(x.alt || "")}"><div><h2 style="margin:0">${esc(x.title)}</h2><i class="note">${esc(x.sci)}</i><p style="margin:8px 0">${esc(x.tagline)}</p><span class="st-chip">${esc(x.status)}</span>${x.statusNote ? `<div class="note" style="margin-top:6px">${esc(x.statusNote)}</div>` : ""}</div></div>
 ${x.sections.map(secHtml).join("")}${lib}`;
 }
@@ -543,7 +543,7 @@ function exampleV() {
     mto = null;
   }
   const p = P(mp),
-    head = `<h2>Worked example</h2><p class="note">Pick a plant, pick one of its tests, then pick the two readings to compare.</p><div class="bar"><span class="note">Plant:</span><select onchange="mpSet(this.value)">${W.map((q) => `<option value="${q.id}"${q.id == mp ? " selected" : ""}>${esc(q.common)}</option>`).join("")}</select></div>`;
+    head = `<h2>Worked example</h2><p class="note">Pick a plant, pick one of its tests, then pick the two readings to compare.</p><div class="bar"><span class="note">Plant:</span><select data-act="mpSet">${W.map((q) => `<option value="${esc(q.id)}"${q.id == mp ? " selected" : ""}>${esc(q.common)}</option>`).join("")}</select></div>`;
   if (!p.tests.length)
     return head + '<div class="note">No tests recorded for this plant.</div>';
   const ti = Math.min(mt, p.tests.length - 1),
@@ -564,7 +564,7 @@ function exampleV() {
       t.colors
         .map(
           (c, i) =>
-            `<button class="ck${i == sel ? " on" : ""}" onclick="${fn}(${i})"><span class="cs" style="background:${c.h}"></span>${esc(c.l)}</button>`,
+            `<button class="ck${i == sel ? " on" : ""}" data-act="${fn}" data-a="${i}"><span class="cs" style="background:${c.h}"></span>${esc(c.l)}</button>`,
         )
         .join(""),
     word =
@@ -587,7 +587,7 @@ function exampleV() {
     ],
     row = (c, h, v) =>
       `<tr><td>${esc(c)}</td><td>${h}</td><td>${f2(v[0])}</td><td>${f2(v[1])}</td><td>${f2(v[2])}</td></tr>`;
-  return `${head}<div class="bar"><span class="note">Test:</span>${p.tests.map((x, i) => `<button class="${i == ti ? "on" : ""}" onclick="mtSet(${i})">${esc(x.aspect)}</button>`).join("")}</div>
+  return `${head}<div class="bar"><span class="note">Test:</span>${p.tests.map((x, i) => `<button class="${i == ti ? "on" : ""}" data-act="mtSet" data-a="${i}">${esc(x.aspect)}</button>`).join("")}</div>
 <div class="note">From (reference reading)</div><div class="row">${chips(from, "mfSet")}</div>
 <div class="note" style="margin-top:8px">To (reading to compare)</div><div class="row">${chips(to, "mtoSet")}</div>
 <div class="cmp"><div class="sq" style="background:${a.h}"></div><div class="note">${esc(a.l)}<br>${a.h}</div><div>→</div><div class="sq" style="background:${b.h}"></div><div class="note">${esc(b.l)}<br>${b.h}</div><div><div class="big">ΔE = ${f2(e)}</div><div class="note">${word}</div></div></div>
@@ -705,6 +705,93 @@ ${exampleV()}
 <h2>How the archive uses it</h2><p class="note">Drift is the ΔE between a test’s Start reading and each later checkpoint. The ranking averages the Start-to-final ΔE across the selected tests, and lower means the color moved less. A ΔE near 2.3 is roughly the smallest difference the average person can notice with the naked eye.</p>
 <p class="note">Caveats: hex values are assumed to be sRGB under D65, which adds error on top of the colorimeter’s own margin of error. CIE76 is the simplest ΔE formula and is uneven for saturated colors. This is not an ISO 105 Grey Scale or Blue Wool rating.</p>`;
 }
+/* Validate data before it reaches the page. Entries that do not match are dropped and logged. */
+const RE_ID = /^[A-Za-z0-9_-]{1,40}$/,
+  RE_HEX = /^#[0-9a-fA-F]{6}$/,
+  RE_IMG = /^[A-Za-z0-9_-][A-Za-z0-9._-]{0,80}\.(?:jpe?g|png|webp)$/i;
+function sanitize(d) {
+  const bad = [],
+    ids = new Set(),
+    wool = (Array.isArray(d.wool) ? d.wool : []).filter((p) => {
+      if (!p || typeof p.id !== "string" || !RE_ID.test(p.id) || ids.has(p.id)) {
+        bad.push("plant " + (p && p.id));
+        return false;
+      }
+      ids.add(p.id);
+      p.tests = (Array.isArray(p.tests) ? p.tests : []).filter((t) => {
+        const ok =
+          t &&
+          Array.isArray(t.colors) &&
+          t.colors.length > 0 &&
+          t.colors.every((c) => c && typeof c.h === "string" && RE_HEX.test(c.h));
+        if (!ok) bad.push("test " + p.id + " / " + (t && t.aspect));
+        return ok;
+      });
+      return true;
+    }),
+    sids = new Set(),
+    studies = (Array.isArray(d.studies) ? d.studies : []).filter((s) => {
+      if (!s || typeof s.id !== "string" || !RE_ID.test(s.id) || sids.has(s.id)) {
+        bad.push("study " + (s && s.id));
+        return false;
+      }
+      sids.add(s.id);
+      if (typeof s.image !== "string" || !RE_IMG.test(s.image)) s.image = "";
+      if (!ids.has(s.plant)) s.plant = "";
+      return true;
+    });
+  if (bad.length) console.warn("Dropped invalid data:", bad);
+  return { ...d, wool, studies };
+}
+/* Event delegation. There are no inline handlers, so the Content-Security-Policy can forbid inline script. */
+const ACT = {
+  go: (a) => go(a),
+  openP: (a) => openP(a),
+  closeP: () => closeP(),
+  closeOv: (a, el, e) => {
+    if (e.target === el) closeP();
+  },
+  wdot: (a) => wdot(a),
+  toggleN: () => {
+    wn = !wn;
+    draw();
+  },
+  wZoom: (a) => wZoom(parseFloat(a)),
+  wReset: () => wReset(),
+  csOpen: (a) => csOpen(a),
+  csBack: () => csBack(),
+  mfSet: (a) => mfSet(+a),
+  mtoSet: (a) => mtoSet(+a),
+  mtSet: (a) => mtSet(+a),
+  search: (a, el) => {
+    q = el.value;
+    grid();
+  },
+  setWm: (a, el) => {
+    wm = el.value;
+    draw();
+  },
+  setVp: (a, el) => {
+    vp = el.value;
+    draw();
+  },
+  setVa: (a, el) => {
+    va = el.value;
+    draw();
+  },
+  mpSet: (a, el) => mpSet(el.value),
+};
+const ON_INPUT = new Set(["search"]),
+  ON_CHANGE = new Set(["setWm", "setVp", "setVa", "mpSet"]);
+["click", "input", "change"].forEach((kind) =>
+  document.addEventListener(kind, (e) => {
+    const el = e.target.closest && e.target.closest("[data-act]");
+    if (!el || !Object.prototype.hasOwnProperty.call(ACT, el.dataset.act)) return;
+    const act = el.dataset.act,
+      k = ON_INPUT.has(act) ? "input" : ON_CHANGE.has(act) ? "change" : "click";
+    if (k === kind) ACT[act](el.dataset.a, el, e);
+  }),
+);
 /* Load data.json, then draw the page */
 fetch("data.json")
   .then((r) => {
@@ -712,8 +799,8 @@ fetch("data.json")
     return r.json();
   })
   .then((j) => {
-    D = j;
-    W = j.wool || [];
+    D = sanitize(j);
+    W = D.wool;
     vp = (W[0] || {}).id;
     draw();
   })

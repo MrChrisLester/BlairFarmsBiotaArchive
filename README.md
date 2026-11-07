@@ -41,3 +41,54 @@ How the color difference is calculated, with a worked example you can change, an
 ## Look and feel
 
 The header uses a watercolor rainbow banner, and a matching rainbow line runs under the tabs. The site follows the visitor's light or dark setting and works on phones as well as desktops.
+
+# Security
+
+This site is built to keep its attack surface small and its trust boundaries easy to see. That is a design goal, not a guarantee.
+
+## How the site works
+
+- It is static: HTML, CSS, JavaScript, JSON and images served by GitHub Pages.
+- There is no server code, database, login, form, upload, cookie or browser storage.
+- There are no third-party scripts, fonts or CDNs. The only request the page makes is for its own `data.json`.
+
+## How content is updated
+
+1. The admin opens `data.json` in a in house tool, a single HTML file run locally from disk. It makes no network requests.
+2. The editor checks for basic mistakes such as invalid hex colors and duplicate IDs, accepts proper edits, then saves back to the exact file the admin chose.
+3. The admin reviews the diff and commits it to GitHub by hand.
+
+There is no API, token or stored credential connecting the editor to the live site.
+
+## Trust boundaries
+
+- **Trusted:** the `main` branch, the admin's GitHub account and the admin's computer.
+- **Treated as trusted for now:** the contents of `data.json`, because only the admin can change it. If outside contributions are ever accepted, it will be treated as untrusted input.
+
+## Threats and mitigations
+
+| Threat | Mitigation | Residual risk |
+|---|---|---|
+| Visitor changes site content | No write path exists from the site | None through the site itself |
+| GitHub account takeover | See repository hardening below | Remains the main risk |
+| Malicious or mistaken change to `data.json` | Manual review of every diff; validation (planned in CI) | Depends on review quality |
+| Compromised admin computer | Local-only tool, no stored credentials | Out of scope for this repo |
+| Supply chain | No dependencies to compromise | Platform-level compromise of GitHub is accepted risk |
+| Custom domain hijack (if used) | Verify the domain in GitHub, keep DNS records current, HTTPS on | Registrar account security |
+
+## Repository hardening
+
+- [ ] Passkey or 2FA on the GitHub account
+- [ ] Branch protection on `main`
+- [ ] Secret scanning and private vulnerability reporting enabled
+- [ ] GitHub Actions permissions set to read-only by default
+- [ ] Verified domain, if a custom domain is added
+
+## Known limitations and planned work
+
+- Data values are inserted into the page with template strings. Most text is HTML-escaped; this will be made consistent, and data will be validated on load and in CI.
+- Inline event handlers will be replaced with event delegation so a Content-Security-Policy can be added. GitHub Pages can't send custom headers, so this will use a meta tag, which covers fewer directives than a header.
+
+## Reporting a vulnerability
+
+Please use this repository's private vulnerability reporting (Security tab → Report a vulnerability) rather than a public issue.
